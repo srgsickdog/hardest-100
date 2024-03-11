@@ -3,9 +3,13 @@ import SpotifySearch from "../components/SpotifySearch";
 import Shortlist from "../components/Shortlist";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getShortListedSongs, getTopTen } from "../firebase/firebaseFunctions";
-import TopTen from "../components/TopTex";
-
+import {
+  getShortListedSongs,
+  getTopTen,
+  deleteSongFromShortList,
+  submitVotesCall,
+} from "../firebase/firebaseFunctions";
+import TopTen from "../components/TopTen";
 const CLIENT_ID = "d9f86c8c80f64a639f2cf4dfe67d5ce5";
 const CLIENT_SECRET = "6f66d41dc20c4bd4897f9e5065995c2b";
 
@@ -14,6 +18,7 @@ const Home = () => {
   const [shortlist, setShortlist] = useState<string[]>([]);
   const [codeInput, setCodeInput] = useState<string>("");
   const [topTen, setTopTen] = useState<Array<any>>([]);
+  const [username, setUserName] = useState("");
 
   const callShortListedSongs = async () => {
     const response = await getShortListedSongs();
@@ -42,12 +47,24 @@ const Home = () => {
     checkSpotify();
   }, []);
 
+  const removeFromShortlist = async (songId: string) => {
+    await deleteSongFromShortList(songId);
+    callShortListedSongs();
+  };
+
   const handleGetTopTen = async () => {
     const response = await getTopTen(codeInput);
-    setTopTen(response.songIds);
+
+    setTopTen(response.songs);
+    setUserName(response.personName);
   };
   const submitVotes = async () => {
-    console.log("submit votes: ");
+    const response = await submitVotesCall(topTen, username);
+  };
+  const removeSongFromTopTen = async (songId: string) => {
+    const newTopTen = topTen.filter((song) => song.id !== songId);
+
+    setTopTen(newTopTen);
   };
   return (
     <>
@@ -74,11 +91,17 @@ const Home = () => {
           accessToken={accessToken}
           updateShortList={callShortListedSongs}
         />
-        <Shortlist shortlist={shortlist} accessToken={accessToken} />
+        <Shortlist
+          shortlist={shortlist}
+          accessToken={accessToken}
+          removeFromShortlist={removeFromShortlist}
+        />
         <TopTen
+          submitVotes={submitVotes}
           topTen={topTen}
           accessToken={accessToken}
-          submitVotes={submitVotes}
+          removeSongFromTopTen={removeSongFromTopTen}
+          setTopTen={setTopTen}
         />
       </SimpleGrid>
     </>

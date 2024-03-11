@@ -1,4 +1,13 @@
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  setDoc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import db from "../fireabaseConfig";
 
 export const getShortListedSongs = async (): Promise<string[]> => {
@@ -17,14 +26,38 @@ export const getShortListedSongs = async (): Promise<string[]> => {
   }
 };
 
+export const deleteSongFromShortList = async (songId: string) => {
+  try {
+    const docRef = doc(db, "shortlistedSongs", songId);
+    await deleteDoc(docRef);
+  } catch (e) {
+    console.error("Error deleting document: ", e);
+  }
+};
+
 export const addSongToShortList = async (songId: string) => {
   try {
-    const docRef = await addDoc(collection(db, "shortlistedSongs"), {
-      id: songId,
-    });
-    console.log("Document written with ID: ", docRef.id);
+    const docRef = doc(db, "shortlistedSongs", songId);
+    await setDoc(docRef, { id: songId });
   } catch (e) {
     console.error("Error adding document: ", e);
+  }
+};
+
+export const submitVotesCall = async (songs: object, personName: string) => {
+  try {
+    // Find the document where personName matches
+    const querySnapshot = await getDocs(
+      query(collection(db, "topTens"), where("personName", "==", personName))
+    );
+    let docId = "";
+    querySnapshot.forEach(async (doc) => {
+      docId = doc.id;
+    });
+    const docRef = doc(db, "topTens", docId);
+    await updateDoc(docRef, { songs: songs });
+  } catch (e) {
+    console.error("Error updating document: ", e);
   }
 };
 
@@ -35,9 +68,12 @@ export const getTopTen = async (code: string) => {
   const querySnapshot = await getDocs(q);
   let results: any = [];
   querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
     results.push(doc.data());
+    const info = {
+      name: doc.data().personName,
+      songs: doc.data().songs,
+    };
+    results.push(info);
   });
   return results[0];
 };
