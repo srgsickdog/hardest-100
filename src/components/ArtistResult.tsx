@@ -14,32 +14,41 @@ const ArtistResult: React.FC<ArtistResultProps> = ({
   showArtistAlbums,
 }) => {
   return (
-    <Card marginY={8} padding={4} style={{ display: "flex" }}>
-      <Stack direction="row" style={{ flex: 1 }}>
+    <Card
+      marginY={2}
+      padding={2}
+      style={{ display: "flex" }}
+      variant={"outline"}
+    >
+      <Stack
+        direction="row"
+        style={{ alignItems: "center", justifyContent: "space-between" }}
+      >
         {artist.images.length > 0 && (
           <Image
             src={artist.images[0].url}
             alt={artist.name}
-            style={{ borderRadius: "24px", width: "25%", minWidth: "25%" }}
+            style={{ borderRadius: "24px", width: "10%", minWidth: "10%" }}
           />
         )}
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
+            flex: 1,
           }}
         >
           <Text fontSize={22}>{artist.name}</Text>
+          <Button
+            colorScheme="blue"
+            onClick={() => showArtistAlbums(artist.id)}
+            marginY={2}
+          >
+            Show albums
+          </Button>
         </div>
       </Stack>
-      <Button
-        colorScheme="blue"
-        onClick={() => showArtistAlbums(artist.id)}
-        marginY={2}
-      >
-        Show albums
-      </Button>
     </Card>
   );
 };

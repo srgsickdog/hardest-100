@@ -75,30 +75,52 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
     setIsPlaying(!isPlaying);
   };
   return (
-    <Card padding={4} marginY={2}>
+    <Card padding={2} marginY={2}>
       <Stack direction="row" justifyContent="space-between">
-        <Box>
+        <Box style={{ flex: 1 }}>
           {showPosition && (
             <Text fontSize={22} color="grey">
               {position}
             </Text>
           )}
-          <Text
-            fontSize={20}
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: "330px", // Adjust the value according to your requirement
-            }}
-          >
-            {songDetails.name}
-          </Text>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent={"space-around"}
-          >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                src={songDetails.album.images[0].url}
+                alt={songDetails.album.name}
+                style={{
+                  maxWidth: "50px",
+                  minWidth: "50px",
+                  maxHeight: "50px",
+                  marginRight: "1rem",
+                }}
+              />
+              <Text
+                fontSize={20}
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "330px", // Adjust the value according to your requirement
+                }}
+              >
+                {songDetails.name}
+              </Text>
+            </div>
+            {songDetails.preview_url !== null && (
+              <audio controls>
+                <source src={songDetails.preview_url} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            )}
+          </div>
+
+          <Stack direction="row" alignItems="center">
             <Text
               fontSize={15}
               color="grey"
@@ -129,11 +151,6 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
           </Stack>
         </Box>
         <Stack direction="row">
-          <Image
-            src={songDetails.album.images[0].url}
-            alt={songDetails.album.name}
-            style={{ maxWidth: "50px", minWidth: "50px", maxHeight: "50px" }}
-          />
           {showRemove && (
             <IconButton
               aria-label="Remove"
@@ -143,14 +160,6 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
           )}
         </Stack>
       </Stack>
-      {songDetails.preview_url !== null && (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <audio controls>
-            <source src={songDetails.preview_url} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      )}
       {showAddtoVotes && (
         <Button
           colorScheme="blue"

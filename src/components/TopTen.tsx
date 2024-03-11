@@ -46,45 +46,47 @@ const TopTen: React.FC<TopTenProps> = ({
   };
 
   return (
-    <Card padding={4}>
-      <Stack direction="row" justifyContent="space-between">
-        <Text fontSize="4xl">Current Votes</Text>
-        {/* <Button onClick={submitVotes} colorScheme="blue">
+    <div style={{ maxHeight: "65vh", overflow: "auto", minHeight: "65vh" }}>
+      <Card padding={4} variant={"outline"}>
+        <Stack direction="row" justifyContent="space-between">
+          <Text fontSize={22}>Current Votes</Text>
+          {/* <Button onClick={submitVotes} colorScheme="blue">
           Save Votes
         </Button> */}
-      </Stack>
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided: any) => (
-            <Box ref={provided.innerRef} {...provided.droppableProps}>
-              {topTen.map((song, index) => (
-                <Draggable key={song.id} draggableId={song.id} index={index}>
-                  {(provided: any) => (
-                    <Box
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <SingleSong
-                        songId={song.id}
-                        accessToken={accessToken}
-                        showRemove={true}
-                        removeFunction={removeSongFromTopTen}
-                        setTopTen={setTopTen}
-                        showAddtoVotes={false}
-                        showPosition={true}
-                        position={index + 1}
-                      />
-                    </Box>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </Box>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </Card>
+        </Stack>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided: any) => (
+              <Box ref={provided.innerRef} {...provided.droppableProps}>
+                {topTen.map((song, index) => (
+                  <Draggable key={song.id} draggableId={song.id} index={index}>
+                    {(provided: any) => (
+                      <Box
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <SingleSong
+                          songId={song.id}
+                          accessToken={accessToken}
+                          showRemove={true}
+                          removeFunction={removeSongFromTopTen}
+                          setTopTen={setTopTen}
+                          showAddtoVotes={false}
+                          showPosition={true}
+                          position={index + 1}
+                        />
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Card>
+    </div>
   );
 };
 

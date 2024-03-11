@@ -15,22 +15,24 @@ const Shortlist: React.FC<ShortlistProps> = ({
   addToTopTen,
 }) => {
   return (
-    <Card padding={4}>
-      <Text fontSize="4xl">Shortlisted Songs</Text>
-      {shortlist.map((songId) => {
-        return (
-          <SingleSong
-            key={songId}
-            songId={songId}
-            accessToken={accessToken}
-            showRemove={true}
-            removeFunction={removeFromShortlist}
-            addToTopTen={addToTopTen}
-            showAddtoVotes={true}
-          />
-        );
-      })}
-    </Card>
+    <div style={{ maxHeight: "65vh", overflow: "auto" }}>
+      <Card padding={4}>
+        <Text fontSize={22}>Shortlisted Songs</Text>
+        {shortlist.map((songId) => {
+          return (
+            <SingleSong
+              key={songId}
+              songId={songId}
+              accessToken={accessToken}
+              showRemove={true}
+              removeFunction={removeFromShortlist}
+              addToTopTen={addToTopTen}
+              showAddtoVotes={true}
+            />
+          );
+        })}
+      </Card>
+    </div>
   );
 };
 

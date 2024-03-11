@@ -12,34 +12,46 @@ interface ArtistAlbumProps {
 
 const ArtistAlbum: React.FC<ArtistAlbumProps> = ({ album, showAlbumSongs }) => {
   return (
-    <Card marginY={8} padding={4} style={{ display: "flex" }}>
-      <Stack direction="row" style={{ flex: 1 }}>
+    <Card
+      marginY={2}
+      padding={2}
+      style={{ display: "flex" }}
+      variant={"outline"}
+    >
+      <Stack
+        direction="row"
+        style={{ alignItems: "center", justifyContent: "space-between" }}
+      >
         {album.images.length > 0 && (
           <Image
             src={album.images[0].url}
             alt={album.name}
-            style={{ borderRadius: "24px", width: "25%", minWidth: "25%" }}
+            style={{ borderRadius: "24px", width: "10%", minWidth: "10%" }}
           />
         )}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flex: 1,
           }}
         >
           <Text fontSize={22}>{album.name}</Text>
-          <Text fontSize={18} color="grey">
-            {album.release_date}
-          </Text>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Text fontSize={18} color="grey" marginRight={4}>
+              {album.release_date.substring(0, 4)}
+            </Text>
+            <Button
+              colorScheme="blue"
+              onClick={() => showAlbumSongs(album.id)}
+              marginY={2}
+            >
+              Show Album Songs
+            </Button>
+          </div>
         </div>
       </Stack>
-      <Button
-        colorScheme="blue"
-        onClick={() => showAlbumSongs(album.id)}
-        marginY={2}
-      >
-        Show Album Songs
-      </Button>
     </Card>
   );
 };

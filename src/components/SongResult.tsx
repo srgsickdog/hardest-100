@@ -22,7 +22,12 @@ const SongResult: React.FC<SongResultProps> = ({
   albumReleaseDate,
 }) => {
   return (
-    <Card marginY={2} padding={2} style={{ display: "flex" }}>
+    <Card
+      marginY={2}
+      padding={2}
+      style={{ display: "flex" }}
+      variant={"outline"}
+    >
       <div
         style={{
           flex: 1,

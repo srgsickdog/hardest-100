@@ -102,11 +102,12 @@ const Home = () => {
         columns={3}
         spacing={5}
         paddingLeft={8}
-        paddingTop={8}
+        paddingTop={4}
         paddingRight={8}
+        paddingBottom={4}
       >
         <Card>
-          <Text marginX={8} fontSize={30}>
+          <Text marginX={8} fontSize={22}>
             Enter Code To get your top ten
           </Text>
           <Stack direction="row" marginY={2} marginX={8} maxWidth={500}>
@@ -126,11 +127,14 @@ const Home = () => {
           </Stack>
         </Card>
       </SimpleGrid>
-      <SimpleGrid columns={3} spacing={5} padding={8}>
+      <Box paddingX={8} paddingBottom={4}>
         <SpotifySearch
           accessToken={accessToken}
           updateShortList={callShortListedSongs}
         />
+      </Box>
+
+      <SimpleGrid columns={2} spacing={5} paddingX={8}>
         <Shortlist
           shortlist={shortlist}
           accessToken={accessToken}
