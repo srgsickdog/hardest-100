@@ -22,44 +22,53 @@ const SongResult: React.FC<SongResultProps> = ({
   albumReleaseDate,
 }) => {
   return (
-    <Card marginY={8} padding={4} style={{ display: "flex" }}>
-      <Stack direction="row" style={{ flex: 1 }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Text fontSize={22}>{song.name}</Text>
-          {artist && (
-            <Text fontSize={18} color="grey">
-              {artist}
-            </Text>
-          )}
-          {album && (
-            <Text fontSize={18} color="grey">
-              {album}
-            </Text>
-          )}
-          {albumReleaseDate && (
-            <Text fontSize={18} color="grey">
-              {albumReleaseDate.substring(0, 4)}
-            </Text>
-          )}
-        </div>
-      </Stack>
-      <Button
-        colorScheme="blue"
-        onClick={() => addToShortList(song.id)}
-        marginY={2}
+    <Card marginY={2} padding={2} style={{ display: "flex" }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        Add To Shortlist
-      </Button>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <audio controls>
-          <source src={song.preview_url} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
+        <Text fontSize={17}>{song.name}</Text>
+        <div style={{ display: "flex" }}>
+          <div style={{ marginRight: "0.2rem" }}>
+            <audio controls>
+              <source src={song.preview_url} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+          <Button
+            colorScheme="blue"
+            onClick={() => addToShortList(song.id)}
+            marginY={2}
+          >
+            Add To Shortlist
+          </Button>
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {artist && (
+          <Text fontSize={15} color="grey" style={{ marginRight: "0.2rem" }}>
+            {artist},
+          </Text>
+        )}
+        {album && (
+          <Text fontSize={15} color="grey" style={{ marginRight: "0.2rem" }}>
+            {album},
+          </Text>
+        )}
+        {albumReleaseDate && (
+          <Text fontSize={15} color="grey">
+            {albumReleaseDate.substring(0, 4)}
+          </Text>
+        )}
       </div>
     </Card>
   );
