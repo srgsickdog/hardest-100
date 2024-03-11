@@ -1,4 +1,12 @@
-import { Box, Button, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Card,
+  Input,
+  SimpleGrid,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import SpotifySearch from "../components/SpotifySearch";
 import Shortlist from "../components/Shortlist";
 import { useEffect, useState } from "react";
@@ -90,24 +98,34 @@ const Home = () => {
   }, [topTen]);
   return (
     <>
-      <Text marginX={8} fontSize={30}>
-        Enter Code To get your top ten
-      </Text>
-      <Stack direction="row" marginY={2} marginX={8} width={500}>
-        <Input
-          placeholder="Enter Code"
-          value={codeInput}
-          onChange={(e) => setCodeInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleGetTopTen();
-            }
-          }}
-        />
-        <Button colorScheme="blue" onClick={handleGetTopTen}>
-          Search
-        </Button>
-      </Stack>
+      <SimpleGrid
+        columns={3}
+        spacing={5}
+        paddingLeft={8}
+        paddingTop={8}
+        paddingRight={8}
+      >
+        <Card>
+          <Text marginX={8} fontSize={30}>
+            Enter Code To get your top ten
+          </Text>
+          <Stack direction="row" marginY={2} marginX={8} width={500}>
+            <Input
+              placeholder="Enter Code"
+              value={codeInput}
+              onChange={(e) => setCodeInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleGetTopTen();
+                }
+              }}
+            />
+            <Button colorScheme="blue" onClick={handleGetTopTen}>
+              Search
+            </Button>
+          </Stack>
+        </Card>
+      </SimpleGrid>
       <SimpleGrid columns={3} spacing={5} padding={8}>
         <SpotifySearch
           accessToken={accessToken}
