@@ -80,6 +80,12 @@ const Home = () => {
     const sorted = sortSongsAscending(newTopTen);
     setTopTen(sorted);
   };
+
+  useEffect(() => {
+    const sorted = sortSongsAscending(topTen);
+    setTopTen(sorted);
+    submitVotes();
+  }, [topTen]);
   return (
     <>
       <Text marginX={8} fontSize={30}>

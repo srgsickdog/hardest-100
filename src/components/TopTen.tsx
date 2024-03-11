@@ -49,9 +49,9 @@ const TopTen: React.FC<TopTenProps> = ({
     <Card padding={4}>
       <Stack direction="row" justifyContent="space-between">
         <Text fontSize="4xl">Current Votes</Text>
-        <Button onClick={submitVotes} colorScheme="blue">
+        {/* <Button onClick={submitVotes} colorScheme="blue">
           Save Votes
-        </Button>
+        </Button> */}
       </Stack>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="droppable">
