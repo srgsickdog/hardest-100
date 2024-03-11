@@ -19,6 +19,7 @@ const Home = () => {
   const [codeInput, setCodeInput] = useState<string>("");
   const [topTen, setTopTen] = useState<Array<any>>([]);
   const [username, setUserName] = useState("");
+  const [showTopVotes, setShowTopVotes] = useState(false);
 
   const callShortListedSongs = async () => {
     const response = await getShortListedSongs();
@@ -62,6 +63,7 @@ const Home = () => {
     const sorted = sortSongsAscending(response.songs);
     setTopTen(sorted);
     setUserName(response.personName);
+    setShowTopVotes(true);
   };
   const submitVotes = async () => {
     const response = await submitVotesCall(topTen, username);
@@ -117,13 +119,15 @@ const Home = () => {
           removeFromShortlist={removeFromShortlist}
           addToTopTen={addToTopTen}
         />
-        <TopTen
-          submitVotes={submitVotes}
-          topTen={topTen}
-          accessToken={accessToken}
-          removeSongFromTopTen={removeSongFromTopTen}
-          setTopTen={setTopTen}
-        />
+        {showTopVotes && (
+          <TopTen
+            submitVotes={submitVotes}
+            topTen={topTen}
+            accessToken={accessToken}
+            removeSongFromTopTen={removeSongFromTopTen}
+            setTopTen={setTopTen}
+          />
+        )}
       </SimpleGrid>
     </>
   );
