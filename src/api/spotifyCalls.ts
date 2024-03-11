@@ -14,9 +14,6 @@ export const searchSpotifyArtistCall = async (
         },
       }
     );
-    // handle response here if needed
-    console.log("artist search response: ", response);
-
     return response.data.artists.items;
   } catch (error) {
     // handle error here

@@ -5,12 +5,14 @@ interface ShortlistProps {
   accessToken: string;
   shortlist: Array<any>;
   removeFromShortlist: any;
+  addToTopTen: any;
 }
 
 const Shortlist: React.FC<ShortlistProps> = ({
   accessToken,
   shortlist,
   removeFromShortlist,
+  addToTopTen,
 }) => {
   return (
     <Card padding={4}>
@@ -23,6 +25,8 @@ const Shortlist: React.FC<ShortlistProps> = ({
             accessToken={accessToken}
             showRemove={true}
             removeFunction={removeFromShortlist}
+            addToTopTen={addToTopTen}
+            showAddtoVotes={true}
           />
         );
       })}

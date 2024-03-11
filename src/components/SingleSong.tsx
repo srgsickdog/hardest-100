@@ -16,6 +16,11 @@ interface ShortlistedSongProps {
   songId: string;
   showRemove?: boolean;
   removeFunction?: any;
+  setTopTen?: any;
+  addToTopTen?: any;
+  showAddtoVotes?: boolean;
+  showPosition?: boolean;
+  position?: number;
 }
 
 const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
@@ -23,11 +28,17 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   songId,
   showRemove = false,
   removeFunction,
+  setTopTen,
+  addToTopTen,
+  showAddtoVotes = false,
+  showPosition = false,
+  position,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [songDetails, setSongDetails] = useState<{
     name: string;
     artists: Array<{ name: string }>;
+    preview_url: string | null;
     album: {
       name: string;
       release_date: string;
@@ -37,6 +48,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
     name: "",
     artists: [{ name: "" }],
     album: { name: "", release_date: "", images: [{ url: "" }] },
+    preview_url: null,
   });
 
   useEffect(() => {
@@ -66,6 +78,11 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
     <Card padding={4} marginY={2}>
       <Stack direction="row" justifyContent="space-between">
         <Box>
+          {showPosition && (
+            <Text fontSize={22} color="grey">
+              {position}
+            </Text>
+          )}
           <Text
             fontSize={20}
             style={{
@@ -126,6 +143,23 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
           )}
         </Stack>
       </Stack>
+      {songDetails.preview_url !== null && (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <audio controls>
+            <source src={songDetails.preview_url} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      )}
+      {showAddtoVotes && (
+        <Button
+          colorScheme="blue"
+          onClick={() => addToTopTen(songId)}
+          marginY={2}
+        >
+          Add to your votes
+        </Button>
+      )}
     </Card>
   );
 };

@@ -21,11 +21,6 @@ const SongResult: React.FC<SongResultProps> = ({
   album,
   albumReleaseDate,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
   return (
     <Card marginY={8} padding={4} style={{ display: "flex" }}>
       <Stack direction="row" style={{ flex: 1 }}>

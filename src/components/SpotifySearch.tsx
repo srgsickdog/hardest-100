@@ -60,8 +60,6 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
           },
         }
       );
-      // handle response here if needed
-      console.log("song search response: ", response);
       setSongSearchResults(response.data.tracks.items);
     } catch (error) {
       // handle error here
@@ -81,8 +79,6 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
           },
         }
       );
-      // handle response here if needed
-      console.log("album search response: ", response);
       setShowResultsFor(ARTIST_ALBUMS);
       setArtistAlbums(response.data.albums.items);
     } catch (error) {

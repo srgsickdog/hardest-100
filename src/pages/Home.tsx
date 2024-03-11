@@ -52,10 +52,15 @@ const Home = () => {
     callShortListedSongs();
   };
 
+  function sortSongsAscending(songs: any) {
+    songs.sort((a: any, b: any) => a.position - b.position);
+    return songs;
+  }
+
   const handleGetTopTen = async () => {
     const response = await getTopTen(codeInput);
-
-    setTopTen(response.songs);
+    const sorted = sortSongsAscending(response.songs);
+    setTopTen(sorted);
     setUserName(response.personName);
   };
   const submitVotes = async () => {
@@ -63,8 +68,17 @@ const Home = () => {
   };
   const removeSongFromTopTen = async (songId: string) => {
     const newTopTen = topTen.filter((song) => song.id !== songId);
-
-    setTopTen(newTopTen);
+    const sorted = sortSongsAscending(newTopTen);
+    setTopTen(sorted);
+  };
+  const addToTopTen = (songId: string) => {
+    // don't add duplicate ids
+    if (topTen.some((song) => song.id === songId)) {
+      return;
+    }
+    const newTopTen = [...topTen, { id: songId, position: topTen.length }];
+    const sorted = sortSongsAscending(newTopTen);
+    setTopTen(sorted);
   };
   return (
     <>
@@ -95,6 +109,7 @@ const Home = () => {
           shortlist={shortlist}
           accessToken={accessToken}
           removeFromShortlist={removeFromShortlist}
+          addToTopTen={addToTopTen}
         />
         <TopTen
           submitVotes={submitVotes}

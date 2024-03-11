@@ -70,6 +70,10 @@ const TopTen: React.FC<TopTenProps> = ({
                         accessToken={accessToken}
                         showRemove={true}
                         removeFunction={removeSongFromTopTen}
+                        setTopTen={setTopTen}
+                        showAddtoVotes={false}
+                        showPosition={true}
+                        position={index + 1}
                       />
                     </Box>
                   )}
@@ -77,9 +81,6 @@ const TopTen: React.FC<TopTenProps> = ({
               ))}
               {provided.placeholder}
             </Box>
-            //     <div ref={provided.innerRef} {...provided.droppableProps}>
-
-            //     </div>
           )}
         </Droppable>
       </DragDropContext>
