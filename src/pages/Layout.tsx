@@ -3,7 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 const Layout = () => {
   return (
     <>
-      <div style={{ display: "flex" }}>
+      {/* <div style={{ display: "flex" }}>
         <Link style={{ marginRight: "3rem" }} to="/">
           Home
         </Link>
@@ -11,7 +11,7 @@ const Layout = () => {
           Page One
         </Link>
         <Link to="/pageTwo">Page Two</Link>
-      </div>
+      </div> */}
       <Outlet />
     </>
   );
