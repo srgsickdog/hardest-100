@@ -109,7 +109,7 @@ const Home = () => {
           <Text marginX={8} fontSize={30}>
             Enter Code To get your top ten
           </Text>
-          <Stack direction="row" marginY={2} marginX={8} width={500}>
+          <Stack direction="row" marginY={2} marginX={8} maxWidth={500}>
             <Input
               placeholder="Enter Code"
               value={codeInput}
