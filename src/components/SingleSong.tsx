@@ -202,7 +202,12 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
           </div>
           {showUrl && (
             <div
-              style={{ display: "flex", alignItems: "center", marginTop: 4 }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: 4,
+                justifyContent: "space-between",
+              }}
             >
               <Input
                 placeholder="Enter Youtube URL"
