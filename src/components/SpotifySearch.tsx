@@ -202,7 +202,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
       const year = date.getFullYear();
       // Check if the year is either 2012 or 2013
       if (year === 2012 || year === 2013) {
-        const response = await addSongToShortList(selectedSongId);
+        const response = await addSongToShortList(songId);
         updateShortList();
       } else {
         setIsOpen(true);
