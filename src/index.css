@@ -12,3 +12,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.hover-card:hover {
+  background-color: rgba(231, 231, 231, 0.493); /* Adjust opacity as needed */
+}

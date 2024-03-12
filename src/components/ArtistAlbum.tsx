@@ -15,8 +15,14 @@ const ArtistAlbum: React.FC<ArtistAlbumProps> = ({ album, showAlbumSongs }) => {
     <Card
       marginY={2}
       padding={2}
-      style={{ display: "flex" }}
+      style={{
+        display: "flex",
+        cursor: "pointer",
+        transition: "background-color 0.3s ease",
+      }}
       variant={"outline"}
+      onClick={() => showAlbumSongs(album.id)}
+      className="hover-card"
     >
       <Stack
         direction="row"
