@@ -32,6 +32,9 @@ const Home = () => {
   const [username, setUserName] = useState("");
   const [showTopVotes, setShowTopVotes] = useState(false);
 
+  const [accessTokenFetched, setAccessTokenFetched] = useState(false);
+  const [shortlistFilterValue, setShortlistFilterValue] = useState("");
+
   const callShortListedSongs = async () => {
     const response = await getShortListedSongs();
     setShortlist(response);
@@ -62,6 +65,7 @@ const Home = () => {
           }
         );
         setAccessToken(response.data.access_token);
+        setAccessTokenFetched(true);
       } catch (error) {}
     };
     checkSpotify();
@@ -100,6 +104,20 @@ const Home = () => {
     const newTopTen = [...topTen, { id: songId, position: topTen.length }];
     const sorted = sortSongsAscending(newTopTen);
     setTopTen(sorted);
+  };
+
+  const filterShortList = async () => {
+    const listToSearch = await getShortListedSongs();
+    const newList = listToSearch.filter(
+      (item: any) =>
+        item.name !== undefined &&
+        item.name.toLowerCase().includes(shortlistFilterValue.toLowerCase())
+    );
+    setShortlist(newList);
+  };
+  const clearFilter = async () => {
+    const response = await getShortListedSongs();
+    setShortlist(response);
   };
 
   useEffect(() => {
@@ -149,28 +167,33 @@ const Home = () => {
           updateShortList={callShortListedSongs}
         />
       </Box>
-
-      <SimpleGrid columns={2} spacing={5} paddingX={8}>
-        <Shortlist
-          shortlist={shortlist}
-          accessToken={accessToken}
-          removeFromShortlist={removeFromShortlist}
-          addToTopTen={addToTopTen}
-        />
-        {showTopVotes ? (
-          <TopTen
-            submitVotes={submitVotes}
-            topTen={topTen}
+      {accessTokenFetched && (
+        <SimpleGrid columns={2} spacing={5} paddingX={8}>
+          <Shortlist
+            shortlist={shortlist}
             accessToken={accessToken}
-            removeSongFromTopTen={removeSongFromTopTen}
-            setTopTen={setTopTen}
+            removeFromShortlist={removeFromShortlist}
+            addToTopTen={addToTopTen}
+            shortListFilterValue={shortlistFilterValue}
+            setShortlistFilterValue={setShortlistFilterValue}
+            filterShortList={filterShortList}
+            clearFilter={clearFilter}
           />
-        ) : (
-          <Text fontSize={30}>
-            Enter Your code in top right to add songs to your top votes
-          </Text>
-        )}
-      </SimpleGrid>
+          {showTopVotes ? (
+            <TopTen
+              submitVotes={submitVotes}
+              topTen={topTen}
+              accessToken={accessToken}
+              removeSongFromTopTen={removeSongFromTopTen}
+              setTopTen={setTopTen}
+            />
+          ) : (
+            <Text fontSize={30}>
+              Enter Your code in top right to add songs to your top votes
+            </Text>
+          )}
+        </SimpleGrid>
+      )}
     </>
   );
 };

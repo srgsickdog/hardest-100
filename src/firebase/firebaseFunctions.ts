@@ -13,10 +13,10 @@ import db from "../fireabaseConfig";
 export const getShortListedSongs = async (): Promise<string[]> => {
   try {
     const querySnapshot = await getDocs(collection(db, "shortlistedSongs"));
-    const shortlistedSongs: string[] = [];
+    const shortlistedSongs: any = [];
 
     querySnapshot.forEach((doc) => {
-      shortlistedSongs.push(doc.data().id);
+      shortlistedSongs.push({ id: doc.data().id, name: doc.data().name });
     });
 
     return shortlistedSongs;
@@ -35,10 +35,10 @@ export const deleteSongFromShortList = async (songId: string) => {
   }
 };
 
-export const addSongToShortList = async (songId: string) => {
+export const addSongToShortList = async (songId: string, songName: string) => {
   try {
     const docRef = doc(db, "shortlistedSongs", songId);
-    await setDoc(docRef, { id: songId });
+    await setDoc(docRef, { id: songId, name: songName });
   } catch (e) {
     console.error("Error adding document: ", e);
   }

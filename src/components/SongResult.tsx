@@ -76,7 +76,7 @@ const SongResult: React.FC<SongResultProps> = ({
           )}
           <Button
             colorScheme="blue"
-            onClick={() => addToShortList(song.id)}
+            onClick={() => addToShortList(song.id, song.name)}
             marginY={2}
           >
             Add To Shortlist

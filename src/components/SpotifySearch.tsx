@@ -94,11 +94,12 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSongId, setSelectedSongId] = useState("");
+  const [selectedSongName, setSelectedSongName] = useState("");
 
   const onClose = () => setIsOpen(false);
 
   const onConfirm = async () => {
-    const response = await addSongToShortList(selectedSongId);
+    const response = await addSongToShortList(selectedSongId, selectedSongName);
     updateShortList();
     onClose();
   };
@@ -194,15 +195,19 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
     }
   };
 
-  const addToShortList = async (songId: string) => {
+  const addToShortList = async (songId: string, songName: string) => {
     setSelectedSongId(songId);
+    setSelectedSongName(songName);
+    console.log("songId: ", songId);
+    console.log("songName: ", songName);
+
     const songDetails = await getSongDetailsCall(accessToken, songId);
     try {
       const date = new Date(songDetails.album.release_date);
       const year = date.getFullYear();
       // Check if the year is either 2012 or 2013
       if (year === 2012 || year === 2013) {
-        const response = await addSongToShortList(songId);
+        const response = await addSongToShortList(songId, songName);
         updateShortList();
       } else {
         setIsOpen(true);

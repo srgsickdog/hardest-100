@@ -67,7 +67,7 @@ const TopTen: React.FC<TopTenProps> = ({
                         {...provided.dragHandleProps}
                       >
                         <SingleSong
-                          songId={song.id}
+                          song={song}
                           accessToken={accessToken}
                           showRemove={true}
                           removeFunction={removeSongFromTopTen}

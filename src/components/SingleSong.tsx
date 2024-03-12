@@ -17,7 +17,7 @@ import { FaPlus } from "react-icons/fa";
 
 interface ShortlistedSongProps {
   accessToken: string;
-  songId: string;
+  song: any;
   showRemove?: boolean;
   removeFunction?: any;
   setTopTen?: any;
@@ -29,7 +29,7 @@ interface ShortlistedSongProps {
 
 const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   accessToken,
-  songId,
+  song,
   showRemove = false,
   removeFunction,
   setTopTen,
@@ -39,7 +39,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   position,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playId, setPlayId] = useState(`audioPlayer${songId}`);
+  const [playId, setPlayId] = useState(`audioPlayer${song.id}`);
   const [songDetails, setSongDetails] = useState<{
     name: string;
     artists: Array<{ name: string }>;
@@ -60,7 +60,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
     const getSongDetailsCall = async () => {
       try {
         const response = await axios.get(
-          `https://api.spotify.com/v1/tracks/${songId}`,
+          `https://api.spotify.com/v1/tracks/${song.id}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -157,7 +157,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
               {showAddtoVotes && (
                 // <Button
                 //   colorScheme="blue"
-                //   onClick={() => addToTopTen(songId)}
+                //   onClick={() => addToTopTen(song.id)}
                 //   marginY={2}
                 // >
                 //   Add to your votes
@@ -165,7 +165,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
                 <IconButton
                   aria-label="Add to votes"
                   icon={<FaPlus />}
-                  onClick={() => addToTopTen(songId)}
+                  onClick={() => addToTopTen(song.id)}
                   colorScheme="blue"
                   marginRight={2}
                 />
@@ -174,7 +174,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
                 <IconButton
                   aria-label="Remove"
                   icon={<CloseIcon />}
-                  onClick={() => removeFunction(songId)}
+                  onClick={() => removeFunction(song.id)}
                 />
               )}
             </div>
