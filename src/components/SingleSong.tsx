@@ -13,6 +13,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 
 interface ShortlistedSongProps {
   accessToken: string;
@@ -139,13 +140,12 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
                   <Button
                     rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
                     onClick={() => togglePlay()}
-                    marginRight={4}
+                    marginRight={2}
                   >
                     Song Preview
                   </Button>
                 </div>
               )}
-
               {songDetails.preview_url !== null && (
                 <div style={{ display: "none" }}>
                   <audio id={playId} controls>
@@ -153,6 +153,22 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
                     Your browser does not support the audio element.
                   </audio>
                 </div>
+              )}
+              {showAddtoVotes && (
+                // <Button
+                //   colorScheme="blue"
+                //   onClick={() => addToTopTen(songId)}
+                //   marginY={2}
+                // >
+                //   Add to your votes
+                // </Button>
+                <IconButton
+                  aria-label="Add to votes"
+                  icon={<FaPlus />}
+                  onClick={() => addToTopTen(songId)}
+                  colorScheme="blue"
+                  marginRight={2}
+                />
               )}
               {showRemove && (
                 <IconButton
@@ -165,15 +181,6 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
           </div>
         </Box>
       </Stack>
-      {showAddtoVotes && (
-        <Button
-          colorScheme="blue"
-          onClick={() => addToTopTen(songId)}
-          marginY={2}
-        >
-          Add to your votes
-        </Button>
-      )}
     </Card>
   );
 };
