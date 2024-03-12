@@ -100,6 +100,9 @@ const checkCode = (code: string) => {
     case "gs4je":
       name = "daine";
       break;
+    case "jdh7f":
+      name = "chris";
+      break;
     default:
       name = "Sorry, that's not a valid option.";
       break;
