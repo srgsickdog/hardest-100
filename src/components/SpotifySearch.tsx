@@ -217,7 +217,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
         <SimpleGrid
           columns={2}
           spacing={5}
-          style={{ maxHeight: "20vh", minHeight: "20vh" }}
+          style={{ maxHeight: "30vh", minHeight: "30vh" }}
         >
           <Box>
             <Text fontSize={22}>Add songs to Shortlist</Text>
@@ -272,7 +272,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
               </Button>
             </Stack>
           </Box>
-          <div style={{ maxHeight: "20vh", overflow: "auto" }}>
+          <div style={{ maxHeight: "30vh", overflow: "auto" }}>
             {showResultsFor === ARTISTS &&
               artistSearchResults.map(
                 (artist: {

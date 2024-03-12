@@ -26,7 +26,7 @@ const ArtistAlbum: React.FC<ArtistAlbumProps> = ({ album, showAlbumSongs }) => {
           <Image
             src={album.images[0].url}
             alt={album.name}
-            style={{ borderRadius: "24px", width: "10%", minWidth: "10%" }}
+            style={{ borderRadius: "24px", width: "5%", minWidth: "5%" }}
           />
         )}
         <div

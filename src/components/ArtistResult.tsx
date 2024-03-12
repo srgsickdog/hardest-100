@@ -28,7 +28,7 @@ const ArtistResult: React.FC<ArtistResultProps> = ({
           <Image
             src={artist.images[0].url}
             alt={artist.name}
-            style={{ borderRadius: "24px", width: "10%", minWidth: "10%" }}
+            style={{ borderRadius: "24px", width: "5%", minWidth: "5%" }}
           />
         )}
         <div
