@@ -12,4 +12,5 @@ export const headings = [
   "I built machines that'll do more damage that plan Z",
   "Get that big black jacked up truck",
   "This home's just a pinapple",
+  "Bibbidy Babity give me that rapidy",
 ];

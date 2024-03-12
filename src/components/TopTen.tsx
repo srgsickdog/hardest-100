@@ -75,6 +75,7 @@ const TopTen: React.FC<TopTenProps> = ({
                           showAddtoVotes={false}
                           showPosition={true}
                           position={index + 1}
+                          showUrl={true}
                         />
                       </Box>
                     )}

@@ -8,12 +8,17 @@ import {
   Image,
   IconButton,
   Icon,
+  Input,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
+import {
+  setYoutubeUrl,
+  getShortlistedSong,
+} from "../firebase/firebaseFunctions";
 
 interface ShortlistedSongProps {
   accessToken: string;
@@ -25,6 +30,7 @@ interface ShortlistedSongProps {
   showAddtoVotes?: boolean;
   showPosition?: boolean;
   position?: number;
+  showUrl?: boolean;
 }
 
 const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
@@ -36,6 +42,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   addToTopTen,
   showAddtoVotes = false,
   showPosition = false,
+  showUrl = false,
   position,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -55,6 +62,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
     album: { name: "", release_date: "", images: [{ url: "" }] },
     preview_url: null,
   });
+  const [youtubeUrlValue, setYoutubeUrlValue] = useState("");
 
   useEffect(() => {
     const getSongDetailsCall = async () => {
@@ -72,8 +80,17 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
         console.error("Error fetching song details:", error);
       }
     };
+    const getYoutubeUrl = async () => {
+      const response = await getShortlistedSong(song.id);
+      if (response) {
+        if (response.youtubeUrl) {
+          setYoutubeUrlValue(response.youtubeUrl);
+        }
+      }
+    };
 
     getSongDetailsCall();
+    getYoutubeUrl();
   }, []);
 
   const togglePlay = () => {
@@ -86,6 +103,10 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
       }
     }
     setIsPlaying(!isPlaying);
+  };
+
+  const callYoutubeUrl = async () => {
+    const response = await setYoutubeUrl(song.id, youtubeUrlValue);
   };
 
   return (
@@ -179,6 +200,27 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
               )}
             </div>
           </div>
+          {showUrl && (
+            <div
+              style={{ display: "flex", alignItems: "center", marginTop: 4 }}
+            >
+              <Input
+                placeholder="Enter Youtube URL"
+                value={youtubeUrlValue}
+                onChange={(e) => setYoutubeUrlValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    callYoutubeUrl();
+                  }
+                }}
+                maxWidth={500}
+                marginRight={4}
+              />
+              <Button colorScheme="blue" onClick={callYoutubeUrl}>
+                Save Youtube URL
+              </Button>
+            </div>
+          )}
         </Box>
       </Stack>
     </Card>

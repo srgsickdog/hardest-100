@@ -7,6 +7,7 @@ import {
   setDoc,
   deleteDoc,
   updateDoc,
+  getDoc,
 } from "firebase/firestore";
 import db from "../fireabaseConfig";
 
@@ -76,6 +77,27 @@ export const getTopTen = async (code: string) => {
     results.push(info);
   });
   return results[0];
+};
+
+export const setYoutubeUrl = async (songId: string, url: string) => {
+  try {
+    const docRef = doc(db, "shortlistedSongs", songId);
+    await setDoc(docRef, { youtubeUrl: url }, { merge: true });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+};
+
+export const getShortlistedSong = async (documentId: string) => {
+  const docRef = doc(db, "shortlistedSongs", documentId);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No such document!");
+    return null;
+  }
 };
 
 const checkCode = (code: string) => {

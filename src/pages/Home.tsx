@@ -31,6 +31,7 @@ const Home = () => {
   const [topTen, setTopTen] = useState<Array<any>>([]);
   const [username, setUserName] = useState("");
   const [showTopVotes, setShowTopVotes] = useState(false);
+  const [showSpotifySearch, setShowStoptifySearch] = useState(true);
 
   const [accessTokenFetched, setAccessTokenFetched] = useState(false);
   const [shortlistFilterValue, setShortlistFilterValue] = useState("");
@@ -132,19 +133,12 @@ const Home = () => {
           {randomHeading}
         </Text>
       </Card>
-      <SimpleGrid
-        columns={3}
-        spacing={5}
-        paddingLeft={8}
-        paddingTop={4}
-        paddingRight={8}
-        paddingBottom={4}
-      >
+      <Box margin={8}>
         <Card>
           <Text marginX={8} fontSize={22}>
             Enter Code To get your top ten
           </Text>
-          <Stack direction="row" marginY={2} marginX={8} maxWidth={500}>
+          <Stack direction="row" marginY={2} marginX={8} flex={1}>
             <Input
               placeholder="Enter Code"
               value={codeInput}
@@ -154,19 +148,29 @@ const Home = () => {
                   handleGetTopTen();
                 }
               }}
+              maxWidth={500}
             />
             <Button colorScheme="blue" onClick={handleGetTopTen}>
               Search
             </Button>
+            <Button
+              colorScheme="blue"
+              onClick={() => setShowStoptifySearch(!showSpotifySearch)}
+            >
+              {showSpotifySearch ? "Hide" : "Show"} Spotify Search Panel
+            </Button>
           </Stack>
         </Card>
-      </SimpleGrid>
-      <Box paddingX={8} paddingBottom={4}>
-        <SpotifySearch
-          accessToken={accessToken}
-          updateShortList={callShortListedSongs}
-        />
       </Box>
+      {showSpotifySearch && (
+        <Box paddingX={8} paddingBottom={4}>
+          <SpotifySearch
+            accessToken={accessToken}
+            updateShortList={callShortListedSongs}
+          />
+        </Box>
+      )}
+
       {accessTokenFetched && (
         <SimpleGrid columns={2} spacing={5} paddingX={8}>
           <Shortlist
