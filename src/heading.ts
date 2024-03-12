@@ -1,6 +1,6 @@
 export const headings = [
   "Lost Forever Lost Together is some bands best album",
-  "Tophy Eyes used to be good, what a shame",
+  "Trophy Eyes used to be good, what a shame",
   "You FFFFFFFFFFUCCCCKKKK Head",
   "What does it meannnnnn",
   "When's Northlane?",
