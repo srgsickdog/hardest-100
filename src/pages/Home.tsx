@@ -17,11 +17,14 @@ import {
   deleteSongFromShortList,
   submitVotesCall,
 } from "../firebase/firebaseFunctions";
+import { headings } from "../heading";
+
 import TopTen from "../components/TopTen";
 const CLIENT_ID = "d9f86c8c80f64a639f2cf4dfe67d5ce5";
 const CLIENT_SECRET = "6f66d41dc20c4bd4897f9e5065995c2b";
 
 const Home = () => {
+  const [randomHeading, setRandomHeading] = useState("");
   const [accessToken, setAccessToken] = useState("");
   const [shortlist, setShortlist] = useState<string[]>([]);
   const [codeInput, setCodeInput] = useState<string>("");
@@ -36,6 +39,14 @@ const Home = () => {
 
   useEffect(() => {
     callShortListedSongs();
+  }, []);
+
+  const getRandomHeading = () => {
+    const randomIndex = Math.floor(Math.random() * headings.length);
+    return headings[randomIndex];
+  };
+  useEffect(() => {
+    setRandomHeading(getRandomHeading());
   }, []);
 
   useEffect(() => {
@@ -98,6 +109,11 @@ const Home = () => {
   }, [topTen]);
   return (
     <>
+      <Card marginX={8} marginTop={4} padding={4}>
+        <Text fontSize={30} textAlign={"center"}>
+          {randomHeading}
+        </Text>
+      </Card>
       <SimpleGrid
         columns={3}
         spacing={5}

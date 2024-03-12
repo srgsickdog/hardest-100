@@ -44,7 +44,10 @@ function ConfirmationModal({
       <ModalContent>
         <ModalHeader>Are you sure?</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>This song didn't come out in 2012 or 2013</ModalBody>
+        <ModalBody>
+          You FFFFFFFFFFUCCCCKKKK Head, This song didn't come out in 2012 or
+          2013
+        </ModalBody>
 
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onConfirm}>

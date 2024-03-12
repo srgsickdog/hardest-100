@@ -1,0 +1,15 @@
+export const headings = [
+  "Lost Forever Lost Together is some bands best album",
+  "Tophy Eyes used to be good, what a shame",
+  "You FFFFFFFFFFUCCCCKKKK Head",
+  "What does it meannnnnn",
+  "When's Northlane?",
+  "Arf! Arf!",
+  "Get them motorbikes out boys",
+  "Why is there a hole in my Gazebo?",
+  "How do you spell Kolum Pugna?",
+  "SHAKE THAT ASS BABY!",
+  "I built machines that'll do more damage that plan Z",
+  "Get that big black jacked up truck",
+  "This home's just a pinapple",
+];
