@@ -7,9 +7,12 @@ import {
   Box,
   Image,
   IconButton,
+  Icon,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
 
 interface ShortlistedSongProps {
   accessToken: string;
@@ -35,6 +38,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   position,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playId, setPlayId] = useState(`audioPlayer${songId}`);
   const [songDetails, setSongDetails] = useState<{
     name: string;
     artists: Array<{ name: string }>;
@@ -72,17 +76,21 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   }, []);
 
   const togglePlay = () => {
+    const audioElement = document.getElementById(playId) as HTMLAudioElement;
+    if (audioElement) {
+      if (isPlaying) {
+        audioElement.pause();
+      } else {
+        audioElement.play();
+      }
+    }
     setIsPlaying(!isPlaying);
   };
+
   return (
     <Card padding={2} marginY={2}>
       <Stack direction="row" justifyContent="space-between">
         <Box style={{ flex: 1 }}>
-          {showPosition && (
-            <Text fontSize={22} color="grey">
-              {position}
-            </Text>
-          )}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
               style={{
@@ -90,75 +98,72 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
                 alignItems: "center",
               }}
             >
-              <Image
-                src={songDetails.album.images[0].url}
-                alt={songDetails.album.name}
-                style={{
-                  maxWidth: "50px",
-                  minWidth: "50px",
-                  maxHeight: "50px",
-                  marginRight: "1rem",
-                }}
-              />
-              <Text
-                fontSize={20}
-                style={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  maxWidth: "330px", // Adjust the value according to your requirement
-                }}
-              >
-                {songDetails.name}
-              </Text>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {showPosition && (
+                  <Text fontSize={22} color="grey" marginRight={4}>
+                    {position}
+                  </Text>
+                )}
+                <Image
+                  src={songDetails.album.images[0].url}
+                  alt={songDetails.album.name}
+                  style={{
+                    maxWidth: "50px",
+                    minWidth: "50px",
+                    maxHeight: "50px",
+                    marginRight: "1rem",
+                  }}
+                />
+                <div>
+                  <Text fontSize={20}>{songDetails.name}</Text>
+                  <Stack direction="row" alignItems="center">
+                    <Text fontSize={15} color="grey">
+                      {songDetails.artists[0].name}
+                    </Text>
+                    <Text fontSize={15} color="grey">
+                      {songDetails.album.name}
+                    </Text>
+                    <Text fontSize={15} color="grey">
+                      {songDetails.album.release_date}
+                    </Text>
+                  </Stack>
+                </div>
+              </div>
             </div>
-            {songDetails.preview_url !== null && (
-              <audio controls>
-                <source src={songDetails.preview_url} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            )}
-          </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {songDetails.preview_url !== null && (
+                <div
+                  onClick={togglePlay}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Button
+                    rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
+                    onClick={() => togglePlay()}
+                    marginRight={4}
+                  >
+                    Song Preview
+                  </Button>
+                </div>
+              )}
 
-          <Stack direction="row" alignItems="center">
-            <Text
-              fontSize={15}
-              color="grey"
-              style={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                width: "120px", // Adjust the value according to your requirement
-              }}
-            >
-              {songDetails.artists[0].name}
-            </Text>
-            <Text
-              fontSize={15}
-              color="grey"
-              style={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                maxWidth: "135px", // Adjust the value according to your requirement
-              }}
-            >
-              {songDetails.album.name}
-            </Text>
-            <Text fontSize={15} color="grey">
-              {songDetails.album.release_date}
-            </Text>
-          </Stack>
+              {songDetails.preview_url !== null && (
+                <div style={{ display: "none" }}>
+                  <audio id={playId} controls>
+                    <source src={songDetails.preview_url} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              )}
+              {showRemove && (
+                <IconButton
+                  aria-label="Remove"
+                  icon={<CloseIcon />}
+                  onClick={() => removeFunction(songId)}
+                />
+              )}
+            </div>
+          </div>
         </Box>
-        <Stack direction="row">
-          {showRemove && (
-            <IconButton
-              aria-label="Remove"
-              icon={<CloseIcon />}
-              onClick={() => removeFunction(songId)}
-            />
-          )}
-        </Stack>
       </Stack>
       {showAddtoVotes && (
         <Button

@@ -141,7 +141,7 @@ const Home = () => {
           removeFromShortlist={removeFromShortlist}
           addToTopTen={addToTopTen}
         />
-        {showTopVotes && (
+        {showTopVotes ? (
           <TopTen
             submitVotes={submitVotes}
             topTen={topTen}
@@ -149,6 +149,10 @@ const Home = () => {
             removeSongFromTopTen={removeSongFromTopTen}
             setTopTen={setTopTen}
           />
+        ) : (
+          <Text fontSize={30}>
+            Enter Your code in top right to add songs to your top votes
+          </Text>
         )}
       </SimpleGrid>
     </>

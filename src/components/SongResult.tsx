@@ -1,5 +1,6 @@
 import { Stack, Text, Card, Button } from "@chakra-ui/react";
 import { useState } from "react";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 interface SongResultProps {
   song: {
@@ -21,6 +22,19 @@ const SongResult: React.FC<SongResultProps> = ({
   album,
   albumReleaseDate,
 }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playId, setPlayId] = useState(`audioPlayer${song.id}`);
+  const togglePlay = () => {
+    const audioElement = document.getElementById(playId) as HTMLAudioElement;
+    if (audioElement) {
+      if (isPlaying) {
+        audioElement.pause();
+      } else {
+        audioElement.play();
+      }
+    }
+    setIsPlaying(!isPlaying);
+  };
   return (
     <Card
       marginY={2}
@@ -38,12 +52,28 @@ const SongResult: React.FC<SongResultProps> = ({
       >
         <Text fontSize={17}>{song.name}</Text>
         <div style={{ display: "flex" }}>
-          <div style={{ marginRight: "0.2rem" }}>
-            <audio controls>
-              <source src={song.preview_url} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
+          {song.preview_url !== null && (
+            <div
+              onClick={togglePlay}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <Button
+                rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
+                onClick={() => togglePlay()}
+                marginRight={4}
+              >
+                Song Preview
+              </Button>
+            </div>
+          )}
+          {song.preview_url !== null && (
+            <div style={{ display: "none" }}>
+              <audio id={playId} controls>
+                <source src={song.preview_url} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
           <Button
             colorScheme="blue"
             onClick={() => addToShortList(song.id)}

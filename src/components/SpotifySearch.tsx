@@ -7,6 +7,16 @@ import {
   Box,
   SimpleGrid,
 } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ArtistResult from "./ArtistResult";
@@ -15,6 +25,39 @@ import ArtistAlbum from "./ArtistAlbum";
 import SongResult from "./SongResult";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { addSongToShortList } from "../firebase/firebaseFunctions";
+import { getSongDetailsCall } from "../api/spotifyCalls";
+
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+function ConfirmationModal({
+  isOpen,
+  onClose,
+  onConfirm,
+}: ConfirmationModalProps) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Are you sure?</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>This song didn't come out in 2012 or 2013</ModalBody>
+
+        <ModalFooter>
+          <Button colorScheme="blue" mr={3} onClick={onConfirm}>
+            Add anyway
+          </Button>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
 
 const SONGS = "songs";
 const ALBUMS = "albums";
@@ -43,6 +86,19 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
   const [albumSongs, setAlbumSongs] = useState([]);
 
   const [showResultsFor, setShowResultsFor] = useState(ARTISTS);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedSongId, setSelectedSongId] = useState("");
+
+  const onClose = () => setIsOpen(false);
+
+  const onConfirm = async () => {
+    const response = await addSongToShortList(selectedSongId);
+    updateShortList();
+    onClose();
+  };
 
   const searchSpotifyArtist = async () => {
     setSongSearch("");
@@ -136,156 +192,176 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
   };
 
   const addToShortList = async (songId: string) => {
-    const response = await addSongToShortList(songId);
-    updateShortList();
+    setSelectedSongId(songId);
+    const songDetails = await getSongDetailsCall(accessToken, songId);
+    try {
+      const date = new Date(songDetails.album.release_date);
+      const year = date.getFullYear();
+      // Check if the year is either 2012 or 2013
+      if (year === 2012 || year === 2013) {
+        const response = await addSongToShortList(selectedSongId);
+        updateShortList();
+      } else {
+        setIsOpen(true);
+      }
+    } catch (error) {
+      console.log("no year listed");
+    }
   };
   return (
-    <Card padding={4}>
-      <SimpleGrid
-        columns={2}
-        spacing={5}
-        style={{ maxHeight: "20vh", minHeight: "20vh" }}
-      >
-        <Box>
-          <Text fontSize={22}>Add songs to Shortlist</Text>
-          <Stack direction="row" marginY={2}>
-            <Input
-              placeholder="Search Artist"
-              value={artistSearch}
-              onChange={(e) => setArtistSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  searchSpotifyArtist();
-                }
-              }}
-              maxWidth={500}
-            />
-            <Button colorScheme="blue" onClick={searchSpotifyArtist}>
-              Search
-            </Button>
-          </Stack>
-          <Text>or</Text>
-          <Stack direction="row" marginY={2}>
-            <Input
-              placeholder="Search Album"
-              value={albumSearch}
-              onChange={(e) => setAlbumSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  searchSpotifyAlbum();
-                }
-              }}
-              maxWidth={500}
-            />
-            <Button colorScheme="blue" onClick={searchSpotifyAlbum}>
-              Search
-            </Button>
-          </Stack>
-          <Text>or</Text>
-          <Stack direction="row" marginY={2}>
-            <Input
-              placeholder="Search Song"
-              value={songSearch}
-              onChange={(e) => setSongSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  searchSpotifySong();
-                }
-              }}
-              maxWidth={500}
-            />
-            <Button colorScheme="blue" onClick={searchSpotifySong}>
-              Search
-            </Button>
-          </Stack>
-        </Box>
-        <div style={{ maxHeight: "20vh", overflow: "auto" }}>
-          {showResultsFor === ARTISTS &&
-            artistSearchResults.map(
-              (artist: {
-                id: React.Key;
-                images: Array<{ url: string }>;
-                name: string;
-              }) => {
-                return (
-                  <ArtistResult
-                    key={artist.id}
-                    artist={artist}
-                    showArtistAlbums={showArtistAlbums}
-                  />
-                );
-              }
-            )}
-          {showResultsFor === ARTIST_ALBUMS &&
-            artistAlbums.map(
-              (album: {
-                id: React.Key;
-                images: Array<{ url: string }>;
-                name: string;
-                release_date: string;
-              }) => {
-                return (
-                  <ArtistAlbum
-                    key={album.id}
-                    album={album}
-                    showAlbumSongs={showAlbumSongs}
-                  />
-                );
-              }
-            )}
-          {showResultsFor === ALBUM_SONGS && (
-            <>
-              <Button
-                colorScheme="blue"
-                leftIcon={<ArrowBackIcon />}
-                width={150}
-                onClick={() => setShowResultsFor(ARTIST_ALBUMS)}
-              >
-                Go Back
+    <>
+      <Card padding={4}>
+        <SimpleGrid
+          columns={2}
+          spacing={5}
+          style={{ maxHeight: "20vh", minHeight: "20vh" }}
+        >
+          <Box>
+            <Text fontSize={22}>Add songs to Shortlist</Text>
+            <Stack direction="row" marginY={2}>
+              <Input
+                placeholder="Search Artist"
+                value={artistSearch}
+                onChange={(e) => setArtistSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    searchSpotifyArtist();
+                  }
+                }}
+                maxWidth={500}
+              />
+              <Button colorScheme="blue" onClick={searchSpotifyArtist}>
+                Search
               </Button>
-              {albumSongs.map(
+            </Stack>
+            <Text>or</Text>
+            <Stack direction="row" marginY={2}>
+              <Input
+                placeholder="Search Album"
+                value={albumSearch}
+                onChange={(e) => setAlbumSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    searchSpotifyAlbum();
+                  }
+                }}
+                maxWidth={500}
+              />
+              <Button colorScheme="blue" onClick={searchSpotifyAlbum}>
+                Search
+              </Button>
+            </Stack>
+            <Text>or</Text>
+            <Stack direction="row" marginY={2}>
+              <Input
+                placeholder="Search Song"
+                value={songSearch}
+                onChange={(e) => setSongSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    searchSpotifySong();
+                  }
+                }}
+                maxWidth={500}
+              />
+              <Button colorScheme="blue" onClick={searchSpotifySong}>
+                Search
+              </Button>
+            </Stack>
+          </Box>
+          <div style={{ maxHeight: "20vh", overflow: "auto" }}>
+            {showResultsFor === ARTISTS &&
+              artistSearchResults.map(
+                (artist: {
+                  id: React.Key;
+                  images: Array<{ url: string }>;
+                  name: string;
+                }) => {
+                  return (
+                    <ArtistResult
+                      key={artist.id}
+                      artist={artist}
+                      showArtistAlbums={showArtistAlbums}
+                    />
+                  );
+                }
+              )}
+            {showResultsFor === ARTIST_ALBUMS &&
+              artistAlbums.map(
+                (album: {
+                  id: React.Key;
+                  images: Array<{ url: string }>;
+                  name: string;
+                  release_date: string;
+                }) => {
+                  return (
+                    <ArtistAlbum
+                      key={album.id}
+                      album={album}
+                      showAlbumSongs={showAlbumSongs}
+                    />
+                  );
+                }
+              )}
+            {showResultsFor === ALBUM_SONGS && (
+              <>
+                <Button
+                  colorScheme="blue"
+                  leftIcon={<ArrowBackIcon />}
+                  width={150}
+                  onClick={() => setShowResultsFor(ARTIST_ALBUMS)}
+                >
+                  Go Back
+                </Button>
+                {albumSongs.map(
+                  (song: {
+                    id: React.Key;
+                    name: string;
+                    release_date: string;
+                    preview_url: string;
+                  }) => {
+                    return (
+                      <SongResult
+                        key={song.id}
+                        song={song}
+                        addToShortList={addToShortList}
+                      />
+                    );
+                  }
+                )}
+              </>
+            )}
+            {showResultsFor === SONGS &&
+              songSearchResults.map(
                 (song: {
                   id: React.Key;
                   name: string;
                   release_date: string;
                   preview_url: string;
+                  artists: Array<{ name: string }>;
+                  album: { release_date: string; name: string };
                 }) => {
                   return (
                     <SongResult
                       key={song.id}
                       song={song}
                       addToShortList={addToShortList}
+                      artist={song.artists[0].name}
+                      album={song.album.name}
+                      albumReleaseDate={song.album.release_date}
                     />
                   );
                 }
               )}
-            </>
-          )}
-          {showResultsFor === SONGS &&
-            songSearchResults.map(
-              (song: {
-                id: React.Key;
-                name: string;
-                release_date: string;
-                preview_url: string;
-                artists: Array<{ name: string }>;
-                album: { release_date: string; name: string };
-              }) => {
-                return (
-                  <SongResult
-                    key={song.id}
-                    song={song}
-                    addToShortList={addToShortList}
-                    artist={song.artists[0].name}
-                    album={song.album.name}
-                    albumReleaseDate={song.album.release_date}
-                  />
-                );
-              }
-            )}
-        </div>
-      </SimpleGrid>
-    </Card>
+          </div>
+        </SimpleGrid>
+      </Card>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onConfirm={onConfirm}
+      />
+    </>
   );
 };
 
