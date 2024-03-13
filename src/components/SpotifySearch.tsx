@@ -178,8 +178,8 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
     }
   };
   return (
-    // <Box style={{ maxHeight: "25vh", minHeight: "25vh", overflow: "auto" }}>
-    <Box>
+    <Box style={{ maxHeight: "25vh", minHeight: "25vh", overflow: "auto" }}>
+      {/* <Box> */}
       <Card padding={4}>
         <SimpleGrid columns={2}>
           <Box>
