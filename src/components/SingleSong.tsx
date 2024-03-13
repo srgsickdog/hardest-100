@@ -21,6 +21,7 @@ import {
 } from "../firebase/firebaseFunctions";
 import { fetchSongDetails } from "../api/spotifyCalls";
 import HorizontalStack from "../Layout/HorizontalStack";
+import ConfirmationModal from "./ConfirmationModal";
 
 interface ShortlistedSongProps {
   accessToken: string;
@@ -72,6 +73,9 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
     useState(false);
   const [finishedYoutubeFetch, setFinishedYoutubeFetch] = useState(false);
   const [youtubeUrlValue, setYoutubeUrlValue] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const onClose = () => setIsModalOpen(false);
 
   const getSongDetails = async () => {
     const response = await fetchSongDetails(accessToken, song.id);
@@ -205,7 +209,7 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
                         <IconButton
                           aria-label="Remove"
                           icon={<CloseIcon />}
-                          onClick={() => removeFunction(song.id)}
+                          onClick={() => setIsModalOpen(true)}
                         />
                       )}
                     </HorizontalStack>
@@ -288,7 +292,7 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
                     <IconButton
                       aria-label="Remove"
                       icon={<CloseIcon />}
-                      onClick={() => removeFunction(song.id)}
+                      onClick={() => setIsModalOpen(true)}
                       size="10"
                       backgroundColor={"white"}
                       marginX={4}
@@ -300,6 +304,16 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
           )}
         </>
       ) : null}
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        modalText={
+          showAddtoVotes
+            ? "Sure you want to delete from shortlist cunt?"
+            : "Sure you want to delete from votes cunt?"
+        }
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={() => removeFunction(song.id)}
+      />
     </>
   );
 };
