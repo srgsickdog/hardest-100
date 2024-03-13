@@ -13,5 +13,6 @@ code {
     monospace;
 }
 .hover-card:hover {
-  background-color: rgba(231, 231, 231, 0.493); /* Adjust opacity as needed */
+  background-color: rgba(231, 231, 231, 0.493);
+  /* background-color: rgba(196, 0, 0, 0.61); */
 }

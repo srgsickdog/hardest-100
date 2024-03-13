@@ -33,6 +33,8 @@ interface ShortlistedSongProps {
   showPosition?: boolean;
   position?: number;
   showUrl?: boolean;
+  miniView?: boolean;
+  showYoutubeWarning?: boolean;
 }
 
 const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
@@ -46,6 +48,8 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
   showPosition = false,
   showUrl = false,
   position,
+  miniView = false,
+  showYoutubeWarning = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playId, setPlayId] = useState(`audioPlayer${song.id}`);
@@ -66,6 +70,7 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
   });
   const [finishedSongDetailsFetch, setFinishedSongDetailsFetch] =
     useState(false);
+  const [finishedYoutubeFetch, setFinishedYoutubeFetch] = useState(false);
   const [youtubeUrlValue, setYoutubeUrlValue] = useState("");
 
   const getSongDetails = async () => {
@@ -80,11 +85,12 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
         setYoutubeUrlValue(response.youtubeUrl);
       }
     }
+    setFinishedYoutubeFetch(true);
   };
 
   useEffect(() => {
-    getSongDetails();
     getYoutubeUrl();
+    getSongDetails();
   }, []);
 
   const togglePlay = () => {
@@ -109,14 +115,145 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
 
   return (
     <>
-      {finishedSongDetailsFetch ? (
-        <Card padding={2} marginY={2}>
-          <Stack direction="row" justifyContent="space-between">
-            <Box style={{ flex: 1 }}>
+      {finishedSongDetailsFetch && finishedYoutubeFetch ? (
+        <>
+          {!miniView ? (
+            <Card
+              padding={2}
+              marginY={2}
+              borderColor={
+                youtubeUrlValue === "" && showYoutubeWarning
+                  ? "rgba(223, 67, 67, 0.61)"
+                  : ""
+              }
+              style={{
+                boxShadow:
+                  youtubeUrlValue === "" && showYoutubeWarning
+                    ? "1px 1px 3px rgba(223, 67, 67, 0.5)"
+                    : "0px 2px 4px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <Stack direction="row" justifyContent="space-between">
+                <Box style={{ flex: 1 }}>
+                  <HorizontalStack style={{ justifyContent: "space-between" }}>
+                    <HorizontalStack>
+                      {showPosition && (
+                        <Text fontSize={22} color="grey" marginRight={4}>
+                          {position}
+                        </Text>
+                      )}
+                      <Image
+                        src={songDetails.album.images[0].url}
+                        alt={songDetails.album.name}
+                        style={{
+                          maxWidth: "50px",
+                          minWidth: "50px",
+                          maxHeight: "50px",
+                          marginRight: "1rem",
+                        }}
+                      />
+                      <div>
+                        <Text fontSize={20}>{songDetails.name}</Text>
+                        <Stack direction="row" alignItems="center">
+                          <Text fontSize={15} color="grey">
+                            {songDetails.artists[0].name}
+                          </Text>
+                          <Text fontSize={15} color="grey">
+                            {songDetails.album.name}
+                          </Text>
+                          <Text fontSize={15} color="grey">
+                            {songDetails.album.release_date.substring(0, 4)}
+                          </Text>
+                        </Stack>
+                      </div>
+                    </HorizontalStack>
+                    <HorizontalStack>
+                      {songDetails.preview_url !== null && (
+                        <Box onClick={togglePlay}>
+                          <HorizontalStack>
+                            <Button
+                              rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
+                              onClick={() => togglePlay()}
+                              marginRight={2}
+                            >
+                              Song Preview
+                            </Button>
+                          </HorizontalStack>
+                        </Box>
+                      )}
+                      {songDetails.preview_url !== null && (
+                        <div style={{ display: "none" }}>
+                          <audio id={playId} controls>
+                            <source
+                              src={songDetails.preview_url}
+                              type="audio/mpeg"
+                            />
+                            Your browser does not support the audio element.
+                          </audio>
+                        </div>
+                      )}
+                      {showAddtoVotes && (
+                        <IconButton
+                          aria-label="Add to votes"
+                          icon={<FaPlus />}
+                          onClick={() => addToTopTen(song.id)}
+                          colorScheme="blue"
+                          marginRight={2}
+                        />
+                      )}
+                      {showRemove && (
+                        <IconButton
+                          aria-label="Remove"
+                          icon={<CloseIcon />}
+                          onClick={() => removeFunction(song.id)}
+                        />
+                      )}
+                    </HorizontalStack>
+                  </HorizontalStack>
+                  {showUrl && (
+                    <HorizontalStack
+                      style={{ marginTop: 4, justifyContent: "space-between" }}
+                    >
+                      <Input
+                        placeholder="Enter Youtube URL"
+                        value={youtubeUrlValue}
+                        onChange={(e) => setYoutubeUrlValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSetYoutubeUrl();
+                          }
+                        }}
+                        maxWidth={500}
+                        marginRight={4}
+                      />
+                      <Button colorScheme="blue" onClick={handleSetYoutubeUrl}>
+                        Save Youtube URL
+                      </Button>
+                    </HorizontalStack>
+                  )}
+                </Box>
+              </Stack>
+            </Card>
+          ) : (
+            <Card
+              marginY={1}
+              paddingY={1}
+              borderColor={
+                youtubeUrlValue === "" && showYoutubeWarning
+                  ? "rgba(223, 67, 67, 0.61)"
+                  : ""
+              }
+              style={{
+                boxShadow:
+                  youtubeUrlValue === "" && showYoutubeWarning
+                    ? "1px 1px 3px rgba(223, 67, 67, 0.5)"
+                    : "0px 2px 4px rgba(0, 0, 0, 0.1)",
+              }}
+            >
               <HorizontalStack style={{ justifyContent: "space-between" }}>
                 <HorizontalStack>
                   {showPosition && (
-                    <Text fontSize={22} color="grey" marginRight={4}>
+                    <Text fontSize={15} color="grey" marginLeft={2} width={8}>
                       {position}
                     </Text>
                   )}
@@ -124,94 +261,44 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
                     src={songDetails.album.images[0].url}
                     alt={songDetails.album.name}
                     style={{
-                      maxWidth: "50px",
-                      minWidth: "50px",
-                      maxHeight: "50px",
+                      maxWidth: "25px",
+                      minWidth: "25px",
+                      maxHeight: "25px",
                       marginRight: "1rem",
+                      borderRadius: "5px",
                     }}
                   />
-                  <div>
-                    <Text fontSize={20}>{songDetails.name}</Text>
-                    <Stack direction="row" alignItems="center">
-                      <Text fontSize={15} color="grey">
-                        {songDetails.artists[0].name}
-                      </Text>
-                      <Text fontSize={15} color="grey">
-                        {songDetails.album.name}
-                      </Text>
-                      <Text fontSize={15} color="grey">
-                        {songDetails.album.release_date}
-                      </Text>
-                    </Stack>
-                  </div>
+                  <HorizontalStack
+                    style={{ justifyContent: "space-between", flex: 1 }}
+                  >
+                    <Text fontSize={18}>{songDetails.name}</Text>
+                    <Text fontSize={12} color="grey" marginX={2}>
+                      {songDetails.artists[0].name}
+                    </Text>
+                  </HorizontalStack>
                 </HorizontalStack>
                 <HorizontalStack>
-                  {songDetails.preview_url !== null && (
-                    <Box onClick={togglePlay}>
-                      <HorizontalStack>
-                        <Button
-                          rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
-                          onClick={() => togglePlay()}
-                          marginRight={2}
-                        >
-                          Song Preview
-                        </Button>
-                      </HorizontalStack>
-                    </Box>
-                  )}
-                  {songDetails.preview_url !== null && (
-                    <div style={{ display: "none" }}>
-                      <audio id={playId} controls>
-                        <source
-                          src={songDetails.preview_url}
-                          type="audio/mpeg"
-                        />
-                        Your browser does not support the audio element.
-                      </audio>
-                    </div>
-                  )}
-                  {showAddtoVotes && (
-                    <IconButton
-                      aria-label="Add to votes"
-                      icon={<FaPlus />}
-                      onClick={() => addToTopTen(song.id)}
-                      colorScheme="blue"
-                      marginRight={2}
-                    />
-                  )}
+                  <Text fontSize={12} color="grey" marginX={2}>
+                    {songDetails.album.name}
+                  </Text>
+                  <Text fontSize={12} color="grey" marginX={2}>
+                    {songDetails.album.release_date.substring(0, 4)}
+                  </Text>
                   {showRemove && (
                     <IconButton
                       aria-label="Remove"
                       icon={<CloseIcon />}
                       onClick={() => removeFunction(song.id)}
+                      size="10"
+                      backgroundColor={"white"}
+                      marginX={4}
                     />
                   )}
                 </HorizontalStack>
               </HorizontalStack>
-              {showUrl && (
-                <HorizontalStack
-                  style={{ marginTop: 4, justifyContent: "space-between" }}
-                >
-                  <Input
-                    placeholder="Enter Youtube URL"
-                    value={youtubeUrlValue}
-                    onChange={(e) => setYoutubeUrlValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSetYoutubeUrl();
-                      }
-                    }}
-                    maxWidth={500}
-                    marginRight={4}
-                  />
-                  <Button colorScheme="blue" onClick={handleSetYoutubeUrl}>
-                    Save Youtube URL
-                  </Button>
-                </HorizontalStack>
-              )}
-            </Box>
-          </Stack>
-        </Card>
+            </Card>
+          )}
+        </>
       ) : null}
     </>
   );

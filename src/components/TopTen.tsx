@@ -1,5 +1,5 @@
 import { Box, Button, Card, Stack, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -8,6 +8,7 @@ import {
   //@ts-ignore
 } from "react-beautiful-dnd";
 import SingleSong from "./SingleSong";
+import HorizontalStack from "../Layout/HorizontalStack";
 
 interface Item {
   id: string;
@@ -31,6 +32,7 @@ const TopTen: React.FC<TopTenProps> = ({
   setTopTen,
   bottomSectionHeight,
 }) => {
+  const [miniView, setMiniView] = useState(false);
   const handleDragEnd = (result: any) => {
     // dropped outside the list
     if (!result.destination) {
@@ -48,48 +50,50 @@ const TopTen: React.FC<TopTenProps> = ({
   };
 
   return (
-    <Box>
-      <Card padding={4} variant={"outline"}>
-        <Stack direction="row" justifyContent="space-between">
-          <Text fontSize={22}>Current Votes</Text>
-          {/* <Button onClick={submitVotes} colorScheme="blue">
-          Save Votes
-        </Button> */}
-        </Stack>
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="droppable">
-            {(provided: any) => (
-              <Box ref={provided.innerRef} {...provided.droppableProps}>
-                {topTen.map((song, index) => (
-                  <Draggable key={song.id} draggableId={song.id} index={index}>
-                    {(provided: any) => (
-                      <Box
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <SingleSong
-                          song={song}
-                          accessToken={accessToken}
-                          showRemove={true}
-                          removeFunction={removeSongFromTopTen}
-                          setTopTen={setTopTen}
-                          showAddtoVotes={false}
-                          showPosition={true}
-                          position={index + 1}
-                          showUrl={true}
-                        />
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </Box>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </Card>
-    </Box>
+    <Card padding={4} variant={"outline"}>
+      <HorizontalStack style={{ marginBottom: "2px" }}>
+        <Text fontSize={22} marginRight={8}>
+          Current Votes
+        </Text>
+        <Button onClick={() => setMiniView(!miniView)} colorScheme="blue">
+          Toggle Mini View
+        </Button>
+      </HorizontalStack>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided: any) => (
+            <Box ref={provided.innerRef} {...provided.droppableProps}>
+              {topTen.map((song, index) => (
+                <Draggable key={song.id} draggableId={song.id} index={index}>
+                  {(provided: any) => (
+                    <Box
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <SingleSong
+                        song={song}
+                        accessToken={accessToken}
+                        showRemove={true}
+                        removeFunction={removeSongFromTopTen}
+                        setTopTen={setTopTen}
+                        showAddtoVotes={false}
+                        showPosition={true}
+                        position={index + 1}
+                        showUrl={true}
+                        miniView={miniView}
+                        showYoutubeWarning={true}
+                      />
+                    </Box>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </Box>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </Card>
   );
 };
 
