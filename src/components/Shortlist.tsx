@@ -27,13 +27,14 @@ const Shortlist: React.FC<ShortlistProps> = ({
   bottomSectionHeight,
 }) => {
   return (
-    <Box
-      style={{
-        maxHeight: bottomSectionHeight,
-        minHeight: bottomSectionHeight,
-        overflow: "auto",
-      }}
-    >
+    // <Box
+    //   style={{
+    //     maxHeight: bottomSectionHeight,
+    //     minHeight: bottomSectionHeight,
+    //     overflow: "auto",
+    //   }}
+    // >
+    <Box>
       <Card padding={4}>
         <HorizontalStack>
           <Text fontSize={22} style={{ flex: 2 }}>

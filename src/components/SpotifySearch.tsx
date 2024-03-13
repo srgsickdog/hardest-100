@@ -178,150 +178,148 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
     }
   };
   return (
-    <Box style={{ maxHeight: "25vh", minHeight: "25vh", overflow: "auto" }}>
-      {/* <Box> */}
-      <Card padding={4}>
-        <SimpleGrid columns={2}>
-          <Box>
-            <Text fontSize={22}>Add songs to Shortlist</Text>
-            <Stack direction="row" marginY={2}>
-              <Input
-                placeholder="Search Artist"
-                value={artistSearch}
-                onChange={(e) => setArtistSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    searchSpotifyArtist();
-                  }
-                }}
-                maxWidth={500}
-              />
-              <Button colorScheme="blue" onClick={searchSpotifyArtist}>
-                Search
-              </Button>
-            </Stack>
-            <Text>or</Text>
-            <Stack direction="row" marginY={2}>
-              <Input
-                placeholder="Search Album"
-                value={albumSearch}
-                onChange={(e) => setAlbumSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearchSpotifyAlbum();
-                  }
-                }}
-                maxWidth={500}
-              />
-              <Button colorScheme="blue" onClick={handleSearchSpotifyAlbum}>
-                Search
-              </Button>
-            </Stack>
-            <Text>or</Text>
-            <Stack direction="row" marginY={2}>
-              <Input
-                placeholder="Search Song"
-                value={songSearch}
-                onChange={(e) => setSongSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearchSpotifySong();
-                  }
-                }}
-                maxWidth={500}
-              />
-              <Button colorScheme="blue" onClick={handleSearchSpotifySong}>
-                Search
-              </Button>
-            </Stack>
-          </Box>
-          <div>
-            {showResultsFor === ARTISTS &&
-              artistSearchResults.map(
-                (artist: {
-                  id: React.Key;
-                  images: Array<{ url: string }>;
-                  name: string;
-                }) => {
-                  return (
-                    <ArtistResult
-                      key={artist.id}
-                      artist={artist}
-                      showArtistAlbums={handleShowArtistAlbum}
-                    />
-                  );
+    // <Box style={{ maxHeight: "25vh", minHeight: "25vh", overflow: "auto" }}>
+    <Box padding={4}>
+      <SimpleGrid columns={2}>
+        <Box>
+          <Text fontSize={22}>Add songs to Shortlist</Text>
+          <Stack direction="row" marginY={2}>
+            <Input
+              placeholder="Search Artist"
+              value={artistSearch}
+              onChange={(e) => setArtistSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  searchSpotifyArtist();
                 }
-              )}
-            {showResultsFor === ARTIST_ALBUMS &&
-              artistAlbums.map(
-                (album: {
-                  id: React.Key;
-                  images: Array<{ url: string }>;
-                  name: string;
-                  release_date: string;
-                }) => {
-                  return (
-                    <ArtistAlbum
-                      key={album.id}
-                      album={album}
-                      showAlbumSongs={handleShowAlbumSongs}
-                    />
-                  );
+              }}
+              maxWidth={500}
+            />
+            <Button colorScheme="blue" onClick={searchSpotifyArtist}>
+              Search
+            </Button>
+          </Stack>
+          <Text>or</Text>
+          <Stack direction="row" marginY={2}>
+            <Input
+              placeholder="Search Album"
+              value={albumSearch}
+              onChange={(e) => setAlbumSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchSpotifyAlbum();
                 }
-              )}
-            {showResultsFor === ALBUM_SONGS && (
-              <>
-                <Button
-                  colorScheme="blue"
-                  leftIcon={<ArrowBackIcon />}
-                  width={150}
-                  onClick={() => setShowResultsFor(ARTIST_ALBUMS)}
-                >
-                  Go Back
-                </Button>
-                {albumSongs.map(
-                  (song: {
-                    id: React.Key;
-                    name: string;
-                    release_date: string;
-                    preview_url: string;
-                  }) => {
-                    return (
-                      <SongResult
-                        key={song.id}
-                        song={song}
-                        addToShortList={handleAddToShortlist}
-                      />
-                    );
-                  }
-                )}
-              </>
+              }}
+              maxWidth={500}
+            />
+            <Button colorScheme="blue" onClick={handleSearchSpotifyAlbum}>
+              Search
+            </Button>
+          </Stack>
+          <Text>or</Text>
+          <Stack direction="row" marginY={2}>
+            <Input
+              placeholder="Search Song"
+              value={songSearch}
+              onChange={(e) => setSongSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchSpotifySong();
+                }
+              }}
+              maxWidth={500}
+            />
+            <Button colorScheme="blue" onClick={handleSearchSpotifySong}>
+              Search
+            </Button>
+          </Stack>
+        </Box>
+        <div>
+          {showResultsFor === ARTISTS &&
+            artistSearchResults.map(
+              (artist: {
+                id: React.Key;
+                images: Array<{ url: string }>;
+                name: string;
+              }) => {
+                return (
+                  <ArtistResult
+                    key={artist.id}
+                    artist={artist}
+                    showArtistAlbums={handleShowArtistAlbum}
+                  />
+                );
+              }
             )}
-            {showResultsFor === SONGS &&
-              songSearchResults.map(
+          {showResultsFor === ARTIST_ALBUMS &&
+            artistAlbums.map(
+              (album: {
+                id: React.Key;
+                images: Array<{ url: string }>;
+                name: string;
+                release_date: string;
+              }) => {
+                return (
+                  <ArtistAlbum
+                    key={album.id}
+                    album={album}
+                    showAlbumSongs={handleShowAlbumSongs}
+                  />
+                );
+              }
+            )}
+          {showResultsFor === ALBUM_SONGS && (
+            <>
+              <Button
+                colorScheme="blue"
+                leftIcon={<ArrowBackIcon />}
+                width={150}
+                onClick={() => setShowResultsFor(ARTIST_ALBUMS)}
+              >
+                Go Back
+              </Button>
+              {albumSongs.map(
                 (song: {
                   id: React.Key;
                   name: string;
                   release_date: string;
                   preview_url: string;
-                  artists: Array<{ name: string }>;
-                  album: { release_date: string; name: string };
                 }) => {
                   return (
                     <SongResult
                       key={song.id}
                       song={song}
                       addToShortList={handleAddToShortlist}
-                      artist={song.artists[0].name}
-                      album={song.album.name}
-                      albumReleaseDate={song.album.release_date}
                     />
                   );
                 }
               )}
-          </div>
-        </SimpleGrid>
-      </Card>
+            </>
+          )}
+          {showResultsFor === SONGS &&
+            songSearchResults.map(
+              (song: {
+                id: React.Key;
+                name: string;
+                release_date: string;
+                preview_url: string;
+                artists: Array<{ name: string }>;
+                album: { release_date: string; name: string };
+              }) => {
+                return (
+                  <SongResult
+                    key={song.id}
+                    song={song}
+                    addToShortList={handleAddToShortlist}
+                    artist={song.artists[0].name}
+                    album={song.album.name}
+                    albumReleaseDate={song.album.release_date}
+                  />
+                );
+              }
+            )}
+        </div>
+      </SimpleGrid>
       <ConfirmationModal
         isOpen={isOpen}
         onClose={onClose}

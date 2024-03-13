@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Card,
+  Grid,
+  GridItem,
   Input,
   SimpleGrid,
   Stack,
@@ -116,89 +118,109 @@ const Home = () => {
     setTopTen(sorted);
     submitVotes();
   }, [topTen]);
-  // style={{ maxHeight: "15vh", minHeight: "" }}
   return (
-    <>
-      <Box paddingY={1}>
-        <Card marginX={8} padding={4} marginBottom={2}>
-          <Text fontSize={30} textAlign={"center"}>
-            {randomHeading}
-          </Text>
-        </Card>
-        <Card marginX={8} padding={4}>
-          <Text marginX={8} fontSize={22}>
-            Enter Code To get your top ten
-          </Text>
-          <Stack direction="row" marginX={8} flex={1}>
-            <Input
-              placeholder="Enter Code"
-              value={codeInput}
-              onChange={(e) => setCodeInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleGetTopTen();
-                }
-              }}
-              maxWidth={500}
-            />
-            <Button colorScheme="blue" onClick={handleGetTopTen}>
-              Search
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={() => {
-                setShowStoptifySearch(!showSpotifySearch);
+    <div style={{ height: "100vh" }}>
+      <Grid
+        h="100%"
+        templateRows="repeat(6, 1fr) 2fr" // Adjusted row sizes
+        templateColumns="1fr 1fr"
+        style={{ height: "100%" }}
+      >
+        <GridItem rowSpan={1} colSpan={2} margin={2}>
+          <Card padding={4}>
+            <Text fontSize={30} textAlign={"center"}>
+              {randomHeading}
+            </Text>
+            <Text fontSize={22}>Enter Code To get your top ten</Text>
+            <Stack direction="row" flex={1}>
+              <Input
+                placeholder="Enter Code"
+                value={codeInput}
+                onChange={(e) => setCodeInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleGetTopTen();
+                  }
+                }}
+                maxWidth={500}
+              />
+              <Button colorScheme="blue" onClick={handleGetTopTen}>
+                Search
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={() => {
+                  setShowStoptifySearch(!showSpotifySearch);
 
-                showSpotifySearch
-                  ? setBottomSectionHeight("75vh")
-                  : setBottomSectionHeight("50svh");
-              }}
-            >
-              {showSpotifySearch ? "Hide" : "Show"} Spotify Search Panel
-            </Button>
-          </Stack>
-        </Card>
-      </Box>
-      {showSpotifySearch && (
-        <Box marginX={8} paddingY={1}>
-          <SpotifySearch
-            accessToken={accessToken}
-            updateShortList={callShortListedSongs}
-          />
-        </Box>
-      )}
-      {accessTokenFetched && (
-        <Box paddingY={1}>
-          <SimpleGrid columns={2} spacing={5} paddingX={8}>
-            <Shortlist
-              shortlist={shortlist}
+                  showSpotifySearch
+                    ? setBottomSectionHeight("75vh")
+                    : setBottomSectionHeight("50svh");
+                }}
+              >
+                {showSpotifySearch ? "Hide" : "Show"} Spotify Search Panel
+              </Button>
+            </Stack>
+          </Card>
+        </GridItem>
+        {showSpotifySearch && (
+          <GridItem
+            rowSpan={1}
+            colSpan={2}
+            style={{
+              overflow: "auto",
+              borderRadius: "10px",
+              minHeight: "300px",
+            }}
+            margin={2}
+            bg={"white"}
+          >
+            <SpotifySearch
               accessToken={accessToken}
-              removeFromShortlist={removeFromShortlist}
-              addToTopTen={addToTopTen}
-              shortListFilterValue={shortlistFilterValue}
-              setShortlistFilterValue={setShortlistFilterValue}
-              filterShortList={filterShortList}
-              clearFilter={clearFilter}
+              updateShortList={callShortListedSongs}
+            />
+          </GridItem>
+        )}
+        <GridItem
+          rowSpan={showSpotifySearch ? 5 : 6}
+          colSpan={1}
+          style={{ overflow: "auto" }}
+          margin={2}
+        >
+          <Shortlist
+            shortlist={shortlist}
+            accessToken={accessToken}
+            removeFromShortlist={removeFromShortlist}
+            addToTopTen={addToTopTen}
+            shortListFilterValue={shortlistFilterValue}
+            setShortlistFilterValue={setShortlistFilterValue}
+            filterShortList={filterShortList}
+            clearFilter={clearFilter}
+            bottomSectionHeight={bottomSectionHeight}
+          />
+        </GridItem>
+        <GridItem
+          rowSpan={showSpotifySearch ? 5 : 6}
+          colSpan={1}
+          style={{ overflow: "auto" }}
+          margin={2}
+        >
+          {showTopVotes ? (
+            <TopTen
+              submitVotes={submitVotes}
+              topTen={topTen}
+              accessToken={accessToken}
+              removeSongFromTopTen={removeSongFromTopTen}
+              setTopTen={setTopTen}
               bottomSectionHeight={bottomSectionHeight}
             />
-            {showTopVotes ? (
-              <TopTen
-                submitVotes={submitVotes}
-                topTen={topTen}
-                accessToken={accessToken}
-                removeSongFromTopTen={removeSongFromTopTen}
-                setTopTen={setTopTen}
-                bottomSectionHeight={bottomSectionHeight}
-              />
-            ) : (
-              <Text fontSize={30}>
-                Enter Your code in top right to add songs to your top votes
-              </Text>
-            )}
-          </SimpleGrid>
-        </Box>
-      )}
-    </>
+          ) : (
+            <Text fontSize={30}>
+              Enter Your code in top right to add songs to your top votes
+            </Text>
+          )}
+        </GridItem>
+      </Grid>
+    </div>
   );
 };
 
