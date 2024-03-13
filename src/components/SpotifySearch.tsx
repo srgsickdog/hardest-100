@@ -20,12 +20,18 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ArtistResult from "./ArtistResult";
-import { searchSpotifyArtistCall } from "../api/spotifyCalls";
+import {
+  searchSpotifyArtistCall,
+  fetchSpotifySong,
+  fetchSpotifyAlbum,
+  fetchArtistAlbum,
+  fetchAlbumSongs,
+} from "../api/spotifyCalls";
 import ArtistAlbum from "./ArtistAlbum";
 import SongResult from "./SongResult";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { addSongToShortList } from "../firebase/firebaseFunctions";
-import { getSongDetailsCall } from "../api/spotifyCalls";
+import { fetchSongDetails } from "../api/spotifyCalls";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -114,94 +120,48 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
     setShowResultsFor(ARTISTS);
   };
 
-  const searchSpotifySong = async () => {
+  const handleSearchSpotifySong = async () => {
     setAlbumSearch("");
     setArtistSearch("");
-    setShowResultsFor(SONGS);
-    try {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/search?q=${songSearch}&type=track`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-      setSongSearchResults(response.data.tracks.items);
-    } catch (error) {
-      // handle error here
-      console.log("search failed: ");
+    const response = await fetchSpotifySong(accessToken, songSearch);
+    if (response !== "error") {
+      setSongSearchResults(response);
     }
+    setShowResultsFor(SONGS);
   };
-  const searchSpotifyAlbum = async () => {
+
+  const handleSearchSpotifyAlbum = async () => {
     setArtistSearch("");
     setSongSearch("");
-    try {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/search?q=${albumSearch}&type=album`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-      setShowResultsFor(ARTIST_ALBUMS);
-      setArtistAlbums(response.data.albums.items);
-    } catch (error) {
-      // handle error here
-      console.log("search failed: ");
+    const response = await fetchSpotifyAlbum(accessToken, albumSearch);
+    if (response !== "error") {
+      setArtistAlbums(response);
     }
-  };
-
-  const showArtistAlbums = async (id: string) => {
-    setArtistAlbums([]);
     setShowResultsFor(ARTIST_ALBUMS);
-    try {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/artists/${id}/albums`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-      setArtistAlbums(response.data.items);
-    } catch (error) {
-      // handle error here
-      console.log("search failed: ");
-    }
   };
 
-  const showAlbumSongs = async (id: string) => {
+  const handleShowArtistAlbum = async (id: string) => {
+    setArtistAlbums([]);
+    const response = await fetchArtistAlbum(accessToken, id);
+    if (response !== "error") {
+      setArtistAlbums(response);
+    }
+    setShowResultsFor(ARTIST_ALBUMS);
+  };
+
+  const handleShowAlbumSongs = async (id: string) => {
     setAlbumSongs([]);
     setShowResultsFor(ALBUM_SONGS);
-    try {
-      const response = await axios.get(
-        `https://api.spotify.com/v1/albums/${id}/tracks`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-      setAlbumSongs(response.data.items);
-    } catch (error) {
-      // handle error here
-      console.log("search failed: ");
+    const response = await fetchAlbumSongs(accessToken, id);
+    if (response !== "error") {
+      setAlbumSongs(response);
     }
   };
 
-  const addToShortList = async (songId: string, songName: string) => {
+  const handleAddToShortlist = async (songId: string, songName: string) => {
     setSelectedSongId(songId);
     setSelectedSongName(songName);
-    console.log("songId: ", songId);
-    console.log("songName: ", songName);
-
-    const songDetails = await getSongDetailsCall(accessToken, songId);
+    const songDetails = await fetchSongDetails(accessToken, songId);
     try {
       const date = new Date(songDetails.album.release_date);
       const year = date.getFullYear();
@@ -213,17 +173,15 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
         setIsOpen(true);
       }
     } catch (error) {
-      console.log("no year listed");
+      const response = await addSongToShortList(songId, songName);
+      updateShortList();
     }
   };
   return (
-    <>
+    // <Box style={{ maxHeight: "25vh", minHeight: "25vh", overflow: "auto" }}>
+    <Box>
       <Card padding={4}>
-        <SimpleGrid
-          columns={2}
-          spacing={5}
-          style={{ maxHeight: "30vh", minHeight: "30vh" }}
-        >
+        <SimpleGrid columns={2}>
           <Box>
             <Text fontSize={22}>Add songs to Shortlist</Text>
             <Stack direction="row" marginY={2}>
@@ -250,12 +208,12 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
                 onChange={(e) => setAlbumSearch(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    searchSpotifyAlbum();
+                    handleSearchSpotifyAlbum();
                   }
                 }}
                 maxWidth={500}
               />
-              <Button colorScheme="blue" onClick={searchSpotifyAlbum}>
+              <Button colorScheme="blue" onClick={handleSearchSpotifyAlbum}>
                 Search
               </Button>
             </Stack>
@@ -267,17 +225,17 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
                 onChange={(e) => setSongSearch(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    searchSpotifySong();
+                    handleSearchSpotifySong();
                   }
                 }}
                 maxWidth={500}
               />
-              <Button colorScheme="blue" onClick={searchSpotifySong}>
+              <Button colorScheme="blue" onClick={handleSearchSpotifySong}>
                 Search
               </Button>
             </Stack>
           </Box>
-          <div style={{ maxHeight: "30vh", overflow: "auto" }}>
+          <div>
             {showResultsFor === ARTISTS &&
               artistSearchResults.map(
                 (artist: {
@@ -289,7 +247,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
                     <ArtistResult
                       key={artist.id}
                       artist={artist}
-                      showArtistAlbums={showArtistAlbums}
+                      showArtistAlbums={handleShowArtistAlbum}
                     />
                   );
                 }
@@ -306,7 +264,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
                     <ArtistAlbum
                       key={album.id}
                       album={album}
-                      showAlbumSongs={showAlbumSongs}
+                      showAlbumSongs={handleShowAlbumSongs}
                     />
                   );
                 }
@@ -332,7 +290,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
                       <SongResult
                         key={song.id}
                         song={song}
-                        addToShortList={addToShortList}
+                        addToShortList={handleAddToShortlist}
                       />
                     );
                   }
@@ -353,7 +311,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
                     <SongResult
                       key={song.id}
                       song={song}
-                      addToShortList={addToShortList}
+                      addToShortList={handleAddToShortlist}
                       artist={song.artists[0].name}
                       album={song.album.name}
                       albumReleaseDate={song.album.release_date}
@@ -369,7 +327,7 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
         onClose={onClose}
         onConfirm={onConfirm}
       />
-    </>
+    </Box>
   );
 };
 

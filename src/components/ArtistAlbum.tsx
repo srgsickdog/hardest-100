@@ -1,4 +1,5 @@
 import { Stack, Text, Image, Card, Button } from "@chakra-ui/react";
+import HorizontalStack from "../Layout/HorizontalStack";
 
 interface ArtistAlbumProps {
   album: {
@@ -35,16 +36,9 @@ const ArtistAlbum: React.FC<ArtistAlbumProps> = ({ album, showAlbumSongs }) => {
             style={{ borderRadius: "24px", width: "5%", minWidth: "5%" }}
           />
         )}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flex: 1,
-          }}
-        >
+        <HorizontalStack style={{ justifyContent: "space-between", flex: 1 }}>
           <Text fontSize={22}>{album.name}</Text>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <HorizontalStack>
             <Text fontSize={18} color="grey" marginRight={4}>
               {album.release_date.substring(0, 4)}
             </Text>
@@ -55,8 +49,8 @@ const ArtistAlbum: React.FC<ArtistAlbumProps> = ({ album, showAlbumSongs }) => {
             >
               Show Album Songs
             </Button>
-          </div>
-        </div>
+          </HorizontalStack>
+        </HorizontalStack>
       </Stack>
     </Card>
   );

@@ -1,5 +1,6 @@
-import { Button, Card, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Card, Input, Text } from "@chakra-ui/react";
 import SingleSong from "./SingleSong";
+import HorizontalStack from "../Layout/HorizontalStack";
 
 interface ShortlistProps {
   accessToken: string;
@@ -10,6 +11,7 @@ interface ShortlistProps {
   setShortlistFilterValue: React.Dispatch<React.SetStateAction<string>>;
   filterShortList: any;
   clearFilter: any;
+  bottomSectionHeight: string;
 }
 
 const Shortlist: React.FC<ShortlistProps> = ({
@@ -21,13 +23,21 @@ const Shortlist: React.FC<ShortlistProps> = ({
   setShortlistFilterValue,
   filterShortList,
   clearFilter,
+
+  bottomSectionHeight,
 }) => {
   return (
-    <div style={{ maxHeight: "65vh", overflow: "auto" }}>
+    <Box
+      style={{
+        maxHeight: bottomSectionHeight,
+        minHeight: bottomSectionHeight,
+        overflow: "auto",
+      }}
+    >
       <Card padding={4}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <HorizontalStack>
           <Text fontSize={22} style={{ flex: 2 }}>
-            Shortlisted Songs
+            {shortlist.length} Shortlisted Songs
           </Text>
           <Input
             style={{ flex: 1, marginRight: 8 }}
@@ -54,7 +64,8 @@ const Shortlist: React.FC<ShortlistProps> = ({
           >
             Clear Filter
           </Button>
-        </div>
+        </HorizontalStack>
+
         {shortlist.map((song) => {
           return (
             <SingleSong
@@ -69,7 +80,7 @@ const Shortlist: React.FC<ShortlistProps> = ({
           );
         })}
       </Card>
-    </div>
+    </Box>
   );
 };
 

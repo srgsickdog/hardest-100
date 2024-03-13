@@ -19,6 +19,8 @@ import {
   setYoutubeUrl,
   getShortlistedSong,
 } from "../firebase/firebaseFunctions";
+import { fetchSongDetails } from "../api/spotifyCalls";
+import HorizontalStack from "../Layout/HorizontalStack";
 
 interface ShortlistedSongProps {
   accessToken: string;
@@ -62,35 +64,26 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
     album: { name: "", release_date: "", images: [{ url: "" }] },
     preview_url: null,
   });
+  const [finishedSongDetailsFetch, setFinishedSongDetailsFetch] =
+    useState(false);
   const [youtubeUrlValue, setYoutubeUrlValue] = useState("");
 
+  const getSongDetails = async () => {
+    const response = await fetchSongDetails(accessToken, song.id);
+    setSongDetails(response);
+    setFinishedSongDetailsFetch(true);
+  };
+  const getYoutubeUrl = async () => {
+    const response = await getShortlistedSong(song.id);
+    if (response) {
+      if (response.youtubeUrl) {
+        setYoutubeUrlValue(response.youtubeUrl);
+      }
+    }
+  };
+
   useEffect(() => {
-    const getSongDetailsCall = async () => {
-      try {
-        const response = await axios.get(
-          `https://api.spotify.com/v1/tracks/${song.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        setSongDetails(response.data);
-      } catch (error) {
-        console.error("Error fetching song details:", error);
-      }
-    };
-    const getYoutubeUrl = async () => {
-      const response = await getShortlistedSong(song.id);
-      if (response) {
-        if (response.youtubeUrl) {
-          setYoutubeUrlValue(response.youtubeUrl);
-        }
-      }
-    };
-
-    getSongDetailsCall();
+    getSongDetails();
     getYoutubeUrl();
   }, []);
 
@@ -106,130 +99,117 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
     setIsPlaying(!isPlaying);
   };
 
-  const callYoutubeUrl = async () => {
+  const handleSetYoutubeUrl = async () => {
     const response = await setYoutubeUrl(song.id, youtubeUrlValue);
   };
 
   return (
-    <Card padding={2} marginY={2}>
-      <Stack direction="row" justifyContent="space-between">
-        <Box style={{ flex: 1 }}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {showPosition && (
-                  <Text fontSize={22} color="grey" marginRight={4}>
-                    {position}
-                  </Text>
-                )}
-                <Image
-                  src={songDetails.album.images[0].url}
-                  alt={songDetails.album.name}
-                  style={{
-                    maxWidth: "50px",
-                    minWidth: "50px",
-                    maxHeight: "50px",
-                    marginRight: "1rem",
-                  }}
-                />
-                <div>
-                  <Text fontSize={20}>{songDetails.name}</Text>
-                  <Stack direction="row" alignItems="center">
-                    <Text fontSize={15} color="grey">
-                      {songDetails.artists[0].name}
+    <>
+      {finishedSongDetailsFetch ? (
+        <Card padding={2} marginY={2}>
+          <Stack direction="row" justifyContent="space-between">
+            <Box style={{ flex: 1 }}>
+              <HorizontalStack style={{ justifyContent: "space-between" }}>
+                <HorizontalStack>
+                  {showPosition && (
+                    <Text fontSize={22} color="grey" marginRight={4}>
+                      {position}
                     </Text>
-                    <Text fontSize={15} color="grey">
-                      {songDetails.album.name}
-                    </Text>
-                    <Text fontSize={15} color="grey">
-                      {songDetails.album.release_date}
-                    </Text>
-                  </Stack>
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {songDetails.preview_url !== null && (
-                <div
-                  onClick={togglePlay}
-                  style={{ display: "flex", alignItems: "center" }}
+                  )}
+                  <Image
+                    src={songDetails.album.images[0].url}
+                    alt={songDetails.album.name}
+                    style={{
+                      maxWidth: "50px",
+                      minWidth: "50px",
+                      maxHeight: "50px",
+                      marginRight: "1rem",
+                    }}
+                  />
+                  <div>
+                    <Text fontSize={20}>{songDetails.name}</Text>
+                    <Stack direction="row" alignItems="center">
+                      <Text fontSize={15} color="grey">
+                        {songDetails.artists[0].name}
+                      </Text>
+                      <Text fontSize={15} color="grey">
+                        {songDetails.album.name}
+                      </Text>
+                      <Text fontSize={15} color="grey">
+                        {songDetails.album.release_date}
+                      </Text>
+                    </Stack>
+                  </div>
+                </HorizontalStack>
+                <HorizontalStack>
+                  {songDetails.preview_url !== null && (
+                    <Box onClick={togglePlay}>
+                      <HorizontalStack>
+                        <Button
+                          rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
+                          onClick={() => togglePlay()}
+                          marginRight={2}
+                        >
+                          Song Preview
+                        </Button>
+                      </HorizontalStack>
+                    </Box>
+                  )}
+                  {songDetails.preview_url !== null && (
+                    <div style={{ display: "none" }}>
+                      <audio id={playId} controls>
+                        <source
+                          src={songDetails.preview_url}
+                          type="audio/mpeg"
+                        />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  )}
+                  {showAddtoVotes && (
+                    <IconButton
+                      aria-label="Add to votes"
+                      icon={<FaPlus />}
+                      onClick={() => addToTopTen(song.id)}
+                      colorScheme="blue"
+                      marginRight={2}
+                    />
+                  )}
+                  {showRemove && (
+                    <IconButton
+                      aria-label="Remove"
+                      icon={<CloseIcon />}
+                      onClick={() => removeFunction(song.id)}
+                    />
+                  )}
+                </HorizontalStack>
+              </HorizontalStack>
+              {showUrl && (
+                <HorizontalStack
+                  style={{ marginTop: 4, justifyContent: "space-between" }}
                 >
-                  <Button
-                    rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
-                    onClick={() => togglePlay()}
-                    marginRight={2}
-                  >
-                    Song Preview
+                  <Input
+                    placeholder="Enter Youtube URL"
+                    value={youtubeUrlValue}
+                    onChange={(e) => setYoutubeUrlValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSetYoutubeUrl();
+                      }
+                    }}
+                    maxWidth={500}
+                    marginRight={4}
+                  />
+                  <Button colorScheme="blue" onClick={handleSetYoutubeUrl}>
+                    Save Youtube URL
                   </Button>
-                </div>
+                </HorizontalStack>
               )}
-              {songDetails.preview_url !== null && (
-                <div style={{ display: "none" }}>
-                  <audio id={playId} controls>
-                    <source src={songDetails.preview_url} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-              )}
-              {showAddtoVotes && (
-                // <Button
-                //   colorScheme="blue"
-                //   onClick={() => addToTopTen(song.id)}
-                //   marginY={2}
-                // >
-                //   Add to your votes
-                // </Button>
-                <IconButton
-                  aria-label="Add to votes"
-                  icon={<FaPlus />}
-                  onClick={() => addToTopTen(song.id)}
-                  colorScheme="blue"
-                  marginRight={2}
-                />
-              )}
-              {showRemove && (
-                <IconButton
-                  aria-label="Remove"
-                  icon={<CloseIcon />}
-                  onClick={() => removeFunction(song.id)}
-                />
-              )}
-            </div>
-          </div>
-          {showUrl && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginTop: 4,
-                justifyContent: "space-between",
-              }}
-            >
-              <Input
-                placeholder="Enter Youtube URL"
-                value={youtubeUrlValue}
-                onChange={(e) => setYoutubeUrlValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    callYoutubeUrl();
-                  }
-                }}
-                maxWidth={500}
-                marginRight={4}
-              />
-              <Button colorScheme="blue" onClick={callYoutubeUrl}>
-                Save Youtube URL
-              </Button>
-            </div>
-          )}
-        </Box>
-      </Stack>
-    </Card>
+            </Box>
+          </Stack>
+        </Card>
+      ) : null}
+    </>
   );
 };
 

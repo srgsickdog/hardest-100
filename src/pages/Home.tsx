@@ -10,18 +10,16 @@ import {
 import SpotifySearch from "../components/SpotifySearch";
 import Shortlist from "../components/Shortlist";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   getShortListedSongs,
   getTopTen,
   deleteSongFromShortList,
   submitVotesCall,
 } from "../firebase/firebaseFunctions";
+import { fetchSpotifyToken } from "../api/spotifyCalls";
 import { headings } from "../heading";
 
 import TopTen from "../components/TopTen";
-const CLIENT_ID = "d9f86c8c80f64a639f2cf4dfe67d5ce5";
-const CLIENT_SECRET = "6f66d41dc20c4bd4897f9e5065995c2b";
 
 const Home = () => {
   const [randomHeading, setRandomHeading] = useState("");
@@ -32,6 +30,7 @@ const Home = () => {
   const [username, setUserName] = useState("");
   const [showTopVotes, setShowTopVotes] = useState(false);
   const [showSpotifySearch, setShowStoptifySearch] = useState(true);
+  const [bottomSectionHeight, setBottomSectionHeight] = useState("50vh");
 
   const [accessTokenFetched, setAccessTokenFetched] = useState(false);
   const [shortlistFilterValue, setShortlistFilterValue] = useState("");
@@ -53,23 +52,14 @@ const Home = () => {
     setRandomHeading(getRandomHeading());
   }, []);
 
+  const getSpotifyToken = async () => {
+    const token = await fetchSpotifyToken();
+    setAccessToken(token);
+    setAccessTokenFetched(true);
+  };
+
   useEffect(() => {
-    const checkSpotify = async () => {
-      try {
-        const response = await axios.post(
-          "https://accounts.spotify.com/api/token",
-          `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`,
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-        );
-        setAccessToken(response.data.access_token);
-        setAccessTokenFetched(true);
-      } catch (error) {}
-    };
-    checkSpotify();
+    getSpotifyToken();
   }, []);
 
   const removeFromShortlist = async (songId: string) => {
@@ -126,19 +116,20 @@ const Home = () => {
     setTopTen(sorted);
     submitVotes();
   }, [topTen]);
+  // style={{ maxHeight: "15vh", minHeight: "" }}
   return (
     <>
-      <Card marginX={8} marginTop={4} padding={4}>
-        <Text fontSize={30} textAlign={"center"}>
-          {randomHeading}
-        </Text>
-      </Card>
-      <Box margin={8}>
-        <Card>
+      <Box paddingY={1}>
+        <Card marginX={8} padding={4} marginBottom={2}>
+          <Text fontSize={30} textAlign={"center"}>
+            {randomHeading}
+          </Text>
+        </Card>
+        <Card marginX={8} padding={4}>
           <Text marginX={8} fontSize={22}>
             Enter Code To get your top ten
           </Text>
-          <Stack direction="row" marginY={2} marginX={8} flex={1}>
+          <Stack direction="row" marginX={8} flex={1}>
             <Input
               placeholder="Enter Code"
               value={codeInput}
@@ -155,7 +146,13 @@ const Home = () => {
             </Button>
             <Button
               colorScheme="blue"
-              onClick={() => setShowStoptifySearch(!showSpotifySearch)}
+              onClick={() => {
+                setShowStoptifySearch(!showSpotifySearch);
+
+                showSpotifySearch
+                  ? setBottomSectionHeight("75vh")
+                  : setBottomSectionHeight("50svh");
+              }}
             >
               {showSpotifySearch ? "Hide" : "Show"} Spotify Search Panel
             </Button>
@@ -163,40 +160,43 @@ const Home = () => {
         </Card>
       </Box>
       {showSpotifySearch && (
-        <Box paddingX={8} paddingBottom={4}>
+        <Box marginX={8} paddingY={1}>
           <SpotifySearch
             accessToken={accessToken}
             updateShortList={callShortListedSongs}
           />
         </Box>
       )}
-
       {accessTokenFetched && (
-        <SimpleGrid columns={2} spacing={5} paddingX={8}>
-          <Shortlist
-            shortlist={shortlist}
-            accessToken={accessToken}
-            removeFromShortlist={removeFromShortlist}
-            addToTopTen={addToTopTen}
-            shortListFilterValue={shortlistFilterValue}
-            setShortlistFilterValue={setShortlistFilterValue}
-            filterShortList={filterShortList}
-            clearFilter={clearFilter}
-          />
-          {showTopVotes ? (
-            <TopTen
-              submitVotes={submitVotes}
-              topTen={topTen}
+        <Box paddingY={1}>
+          <SimpleGrid columns={2} spacing={5} paddingX={8}>
+            <Shortlist
+              shortlist={shortlist}
               accessToken={accessToken}
-              removeSongFromTopTen={removeSongFromTopTen}
-              setTopTen={setTopTen}
+              removeFromShortlist={removeFromShortlist}
+              addToTopTen={addToTopTen}
+              shortListFilterValue={shortlistFilterValue}
+              setShortlistFilterValue={setShortlistFilterValue}
+              filterShortList={filterShortList}
+              clearFilter={clearFilter}
+              bottomSectionHeight={bottomSectionHeight}
             />
-          ) : (
-            <Text fontSize={30}>
-              Enter Your code in top right to add songs to your top votes
-            </Text>
-          )}
-        </SimpleGrid>
+            {showTopVotes ? (
+              <TopTen
+                submitVotes={submitVotes}
+                topTen={topTen}
+                accessToken={accessToken}
+                removeSongFromTopTen={removeSongFromTopTen}
+                setTopTen={setTopTen}
+                bottomSectionHeight={bottomSectionHeight}
+              />
+            ) : (
+              <Text fontSize={30}>
+                Enter Your code in top right to add songs to your top votes
+              </Text>
+            )}
+          </SimpleGrid>
+        </Box>
       )}
     </>
   );

@@ -1,6 +1,7 @@
-import { Stack, Text, Card, Button } from "@chakra-ui/react";
+import { Stack, Text, Card, Button, Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { FaPlay, FaPause } from "react-icons/fa";
+import HorizontalStack from "../Layout/HorizontalStack";
 
 interface SongResultProps {
   song: {
@@ -42,29 +43,21 @@ const SongResult: React.FC<SongResultProps> = ({
       style={{ display: "flex" }}
       variant={"outline"}
     >
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+      <HorizontalStack style={{ flex: 1, justifyContent: "space-between" }}>
         <Text fontSize={17}>{song.name}</Text>
-        <div style={{ display: "flex" }}>
+        <HorizontalStack>
           {song.preview_url !== null && (
-            <div
-              onClick={togglePlay}
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <Button
-                rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
-                onClick={() => togglePlay()}
-                marginRight={4}
-              >
-                Song Preview
-              </Button>
-            </div>
+            <Box onClick={togglePlay}>
+              <HorizontalStack>
+                <Button
+                  rightIcon={!isPlaying ? <FaPlay /> : <FaPause />}
+                  onClick={() => togglePlay()}
+                  marginRight={2}
+                >
+                  Song Preview
+                </Button>
+              </HorizontalStack>
+            </Box>
           )}
           {song.preview_url !== null && (
             <div style={{ display: "none" }}>
@@ -81,14 +74,9 @@ const SongResult: React.FC<SongResultProps> = ({
           >
             Add To Shortlist
           </Button>
-        </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
+        </HorizontalStack>
+      </HorizontalStack>
+      <HorizontalStack>
         {artist && (
           <Text fontSize={15} color="grey" style={{ marginRight: "0.2rem" }}>
             {artist},
@@ -104,7 +92,7 @@ const SongResult: React.FC<SongResultProps> = ({
             {albumReleaseDate.substring(0, 4)}
           </Text>
         )}
-      </div>
+      </HorizontalStack>
     </Card>
   );
 };

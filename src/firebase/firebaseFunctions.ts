@@ -78,7 +78,6 @@ export const submitVotesCall = async (songs: object, personName: string) => {
 
 export const getTopTen = async (code: string) => {
   const name = checkCode(code.toLowerCase());
-
   const q = query(collection(db, "topTens"), where("personName", "==", name));
   const querySnapshot = await getDocs(q);
   let results: any = [];

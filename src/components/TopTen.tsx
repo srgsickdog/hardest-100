@@ -20,6 +20,7 @@ interface TopTenProps {
   submitVotes: any;
   removeSongFromTopTen: any;
   setTopTen: any;
+  bottomSectionHeight: string;
 }
 
 const TopTen: React.FC<TopTenProps> = ({
@@ -28,6 +29,7 @@ const TopTen: React.FC<TopTenProps> = ({
   submitVotes,
   removeSongFromTopTen,
   setTopTen,
+  bottomSectionHeight,
 }) => {
   const handleDragEnd = (result: any) => {
     // dropped outside the list
@@ -46,7 +48,13 @@ const TopTen: React.FC<TopTenProps> = ({
   };
 
   return (
-    <div style={{ maxHeight: "65vh", overflow: "auto", minHeight: "65vh" }}>
+    <Box
+      style={{
+        maxHeight: bottomSectionHeight,
+        minHeight: bottomSectionHeight,
+        overflow: "auto",
+      }}
+    >
       <Card padding={4} variant={"outline"}>
         <Stack direction="row" justifyContent="space-between">
           <Text fontSize={22}>Current Votes</Text>
@@ -87,7 +95,7 @@ const TopTen: React.FC<TopTenProps> = ({
           </Droppable>
         </DragDropContext>
       </Card>
-    </div>
+    </Box>
   );
 };
 
