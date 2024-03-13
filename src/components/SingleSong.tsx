@@ -33,7 +33,7 @@ interface ShortlistedSongProps {
   showUrl?: boolean;
 }
 
-const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
+const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
   accessToken,
   song,
   showRemove = false,
@@ -75,6 +75,7 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
             },
           }
         );
+
         setSongDetails(response.data);
       } catch (error) {
         console.error("Error fetching song details:", error);
@@ -232,4 +233,4 @@ const ShortlisedSong: React.FC<ShortlistedSongProps> = ({
   );
 };
 
-export default ShortlisedSong;
+export default ShortlistedSong;

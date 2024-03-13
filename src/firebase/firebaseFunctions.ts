@@ -8,6 +8,7 @@ import {
   deleteDoc,
   updateDoc,
   getDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import db from "../fireabaseConfig";
 
@@ -17,7 +18,19 @@ export const getShortListedSongs = async (): Promise<string[]> => {
     const shortlistedSongs: any = [];
 
     querySnapshot.forEach((doc) => {
-      shortlistedSongs.push({ id: doc.data().id, name: doc.data().name });
+      shortlistedSongs.push({
+        id: doc.data().id,
+        name: doc.data().name,
+        timeAdded: doc.data().timeAdded,
+      });
+    });
+
+    shortlistedSongs.sort((a: any, b: any) => {
+      if (!a.timeAdded && !b.timeAdded) return 0; // if both are undefined, maintain current order
+      if (!a.timeAdded) return 1; // if a.timeAdded is undefined, move it to the end
+      if (!b.timeAdded) return -1; // if b.timeAdded is undefined, move it to the end
+      // Sort in descending order based on timeAdded
+      return b.timeAdded.seconds - a.timeAdded.seconds;
     });
 
     return shortlistedSongs;
@@ -39,7 +52,8 @@ export const deleteSongFromShortList = async (songId: string) => {
 export const addSongToShortList = async (songId: string, songName: string) => {
   try {
     const docRef = doc(db, "shortlistedSongs", songId);
-    await setDoc(docRef, { id: songId, name: songName });
+    const timestamp = serverTimestamp();
+    await setDoc(docRef, { id: songId, name: songName, timeAdded: timestamp });
   } catch (e) {
     console.error("Error adding document: ", e);
   }
