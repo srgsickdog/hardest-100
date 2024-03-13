@@ -100,7 +100,11 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
   };
 
   const handleSetYoutubeUrl = async () => {
-    const response = await setYoutubeUrl(song.id, youtubeUrlValue);
+    const response = await setYoutubeUrl(
+      song.id,
+      youtubeUrlValue,
+      songDetails.name
+    );
   };
 
   return (

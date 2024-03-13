@@ -23,7 +23,6 @@ const Shortlist: React.FC<ShortlistProps> = ({
   setShortlistFilterValue,
   filterShortList,
   clearFilter,
-
   bottomSectionHeight,
 }) => {
   return (

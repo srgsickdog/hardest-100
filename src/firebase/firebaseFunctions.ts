@@ -92,10 +92,28 @@ export const getTopTen = async (code: string) => {
   return results[0];
 };
 
-export const setYoutubeUrl = async (songId: string, url: string) => {
+export const setYoutubeUrl = async (
+  songId: string,
+  url: string,
+  songName: string
+) => {
   try {
     const docRef = doc(db, "shortlistedSongs", songId);
-    await setDoc(docRef, { youtubeUrl: url }, { merge: true });
+    const docSnapshot = await getDoc(docRef);
+    if (!docSnapshot.exists() || !docSnapshot.data().timeAdded) {
+      const timeAdded = serverTimestamp();
+      await setDoc(
+        docRef,
+        { id: songId, youtubeUrl: url, timeAdded, name: songName },
+        { merge: true }
+      );
+    } else {
+      await setDoc(
+        docRef,
+        { youtubeUrl: url, name: songName },
+        { merge: true }
+      );
+    }
   } catch (e) {
     console.error("Error adding document: ", e);
   }

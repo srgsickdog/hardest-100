@@ -109,6 +109,7 @@ const Home = () => {
     setShortlist(newList);
   };
   const clearFilter = async () => {
+    setShortlistFilterValue("");
     const response = await getShortListedSongs();
     setShortlist(response);
   };

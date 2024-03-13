@@ -48,13 +48,6 @@ const TopTen: React.FC<TopTenProps> = ({
   };
 
   return (
-    // <Box
-    //   style={{
-    //     maxHeight: bottomSectionHeight,
-    //     minHeight: bottomSectionHeight,
-    //     overflow: "auto",
-    //   }}
-    // >
     <Box>
       <Card padding={4} variant={"outline"}>
         <Stack direction="row" justifyContent="space-between">
