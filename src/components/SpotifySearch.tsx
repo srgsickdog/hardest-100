@@ -32,41 +32,7 @@ import SongResult from "./SongResult";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { addSongToShortList } from "../firebase/firebaseFunctions";
 import { fetchSongDetails } from "../api/spotifyCalls";
-
-interface ConfirmationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
-
-function ConfirmationModal({
-  isOpen,
-  onClose,
-  onConfirm,
-}: ConfirmationModalProps) {
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Are you sure?</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          You FFFFFFFFFFUCCCCKKKK Head, This song didn't come out in 2012 or
-          2013
-        </ModalBody>
-
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onConfirm}>
-            Add anyway
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
-}
+import ConfirmationModal from "./ConfirmationModal";
 
 const SONGS = "songs";
 const ALBUMS = "albums";
@@ -321,6 +287,8 @@ const SpotifySearch: React.FC<SpotifySearchProps> = ({
         </div>
       </SimpleGrid>
       <ConfirmationModal
+        modalText="You FFFFFFFFFFUCCCCKKKK Head, This song didn't come out in 2012 or
+      2013"
         isOpen={isOpen}
         onClose={onClose}
         onConfirm={onConfirm}
