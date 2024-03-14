@@ -1,6 +1,7 @@
 import { Box, Button, Card, Input, Text } from "@chakra-ui/react";
 import SingleSong from "./SingleSong";
 import HorizontalStack from "../Layout/HorizontalStack";
+import { useState } from "react";
 
 interface ShortlistProps {
   accessToken: string;
@@ -25,14 +26,8 @@ const Shortlist: React.FC<ShortlistProps> = ({
   clearFilter,
   bottomSectionHeight,
 }) => {
+  const [miniView, setMiniView] = useState(false);
   return (
-    // <Box
-    //   style={{
-    //     maxHeight: bottomSectionHeight,
-    //     minHeight: bottomSectionHeight,
-    //     overflow: "auto",
-    //   }}
-    // >
     <Box>
       <Card padding={4}>
         <HorizontalStack>
@@ -40,7 +35,7 @@ const Shortlist: React.FC<ShortlistProps> = ({
             {shortlist.length} Shortlisted Songs
           </Text>
           <Input
-            style={{ flex: 1, marginRight: 8 }}
+            style={{ flex: 1, marginRight: 4 }}
             placeholder="filter"
             value={shortListFilterValue}
             onChange={(e) => setShortlistFilterValue(e.target.value)}
@@ -51,18 +46,21 @@ const Shortlist: React.FC<ShortlistProps> = ({
             }}
           />
           <Button
-            style={{ flex: 0.3, marginRight: 8 }}
+            style={{ flex: 0.3, marginRight: 4 }}
             colorScheme="blue"
             onClick={filterShortList}
           >
             Filter
           </Button>
           <Button
-            style={{ flex: 0.3 }}
+            style={{ marginRight: 4 }}
             colorScheme="blue"
             onClick={clearFilter}
           >
             Clear Filter
+          </Button>
+          <Button onClick={() => setMiniView(!miniView)} colorScheme="blue">
+            Toggle Mini View
           </Button>
         </HorizontalStack>
 
@@ -76,6 +74,7 @@ const Shortlist: React.FC<ShortlistProps> = ({
               removeFunction={removeFromShortlist}
               addToTopTen={addToTopTen}
               showAddtoVotes={true}
+              miniView={miniView}
             />
           );
         })}

@@ -288,6 +288,30 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
                   <Text fontSize={12} color="grey" marginX={2}>
                     {songDetails.album.release_date.substring(0, 4)}
                   </Text>
+                  {songDetails.preview_url !== null ? (
+                    <IconButton
+                      aria-label="Remove"
+                      icon={!isPlaying ? <FaPlay /> : <FaPause />}
+                      onClick={() => togglePlay()}
+                      size="10"
+                      backgroundColor={"white"}
+                      marginX={4}
+                    />
+                  ) : (
+                    <Box width="12" />
+                  )}
+                  {songDetails.preview_url !== null && (
+                    <div style={{ display: "none" }}>
+                      <audio id={playId} controls>
+                        <source
+                          src={songDetails.preview_url}
+                          type="audio/mpeg"
+                        />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  )}
+
                   {showRemove && (
                     <IconButton
                       aria-label="Remove"
