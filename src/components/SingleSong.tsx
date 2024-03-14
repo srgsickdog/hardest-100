@@ -311,7 +311,15 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
                       </audio>
                     </div>
                   )}
-
+                  {showAddtoVotes && (
+                    <IconButton
+                      aria-label="Add to votes"
+                      icon={<FaPlus />}
+                      onClick={() => addToTopTen(song.id)}
+                      colorScheme="blue"
+                      marginRight={2}
+                    />
+                  )}
                   {showRemove && (
                     <IconButton
                       aria-label="Remove"
