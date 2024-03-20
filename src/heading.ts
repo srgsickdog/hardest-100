@@ -21,4 +21,5 @@ export const headings = [
   "Bang Bang baby put her to bed",
   "Your pretty and I like ya",
   "New Stranga EP in the works?",
+  "🫖",
 ];
