@@ -10,11 +10,6 @@ import {
 import SingleSong from "./SingleSong";
 import HorizontalStack from "../Layout/HorizontalStack";
 
-interface Item {
-  id: string;
-  content: string;
-}
-
 interface TopTenProps {
   accessToken: string;
   topTen: Array<any>;
@@ -41,7 +36,6 @@ const TopTen: React.FC<TopTenProps> = ({
     const reorderedItems = Array.from(topTen);
     const [removed] = reorderedItems.splice(result.source.index, 1);
     reorderedItems.splice(result.destination.index, 0, removed);
-    console.log("reorderedItems: ", reorderedItems);
     reorderedItems.forEach((item, index) => {
       item.position = index;
     });

@@ -26,7 +26,7 @@ const Shortlist: React.FC<ShortlistProps> = ({
   clearFilter,
   bottomSectionHeight,
 }) => {
-  const [miniView, setMiniView] = useState(false);
+  const [miniView, setMiniView] = useState(true);
   return (
     <Box>
       <Card padding={4}>
