@@ -11,6 +11,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import db from "../fireabaseConfig";
+import { PersonsResults, SongDetails, Song } from "../types/types";
 
 export const getShortListedSongs = async (): Promise<string[]> => {
   try {
@@ -60,36 +61,40 @@ export const addSongToShortList = async (songId: string, songName: string) => {
 };
 
 export const submitVotesCall = async (songs: object, personName: string) => {
-  try {
-    // Find the document where personName matches
-    const querySnapshot = await getDocs(
-      query(collection(db, "topTens"), where("personName", "==", personName))
-    );
-    let docId = "";
-    querySnapshot.forEach(async (doc) => {
-      docId = doc.id;
-    });
-    const docRef = doc(db, "topTens", docId);
-    await updateDoc(docRef, { songs: songs });
-  } catch (e) {
-    console.error("Error updating document: ", e);
+  if (personName.includes("Test")) {
+    try {
+      // Find the document where personName matches
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "topTensTest"),
+          where("personName", "==", personName)
+        )
+      );
+      let docId = "";
+      querySnapshot.forEach(async (doc) => {
+        docId = doc.id;
+      });
+      const docRef = doc(db, "topTensTest", docId);
+      await updateDoc(docRef, { songs: songs });
+    } catch (e) {
+      console.error("Error updating document test: ", e);
+    }
+  } else {
+    try {
+      // Find the document where personName matches
+      const querySnapshot = await getDocs(
+        query(collection(db, "topTens"), where("personName", "==", personName))
+      );
+      let docId = "";
+      querySnapshot.forEach(async (doc) => {
+        docId = doc.id;
+      });
+      const docRef = doc(db, "topTens", docId);
+      await updateDoc(docRef, { songs: songs });
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
   }
-};
-
-export const getTopTen = async (code: string) => {
-  const name = checkCode(code.toLowerCase());
-  const q = query(collection(db, "topTens"), where("personName", "==", name));
-  const querySnapshot = await getDocs(q);
-  let results: any = [];
-  querySnapshot.forEach((doc) => {
-    results.push(doc.data());
-    const info = {
-      name: doc.data().personName,
-      songs: doc.data().songs,
-    };
-    results.push(info);
-  });
-  return results[0];
 };
 
 export const setYoutubeUrl = async (
@@ -119,6 +124,40 @@ export const setYoutubeUrl = async (
   }
 };
 
+export const getTopTen = async (code: string) => {
+  const name: string = checkCode(code.toLowerCase());
+  if (name.includes("Test")) {
+    const q = query(
+      collection(db, "topTensTest"),
+      where("personName", "==", name)
+    );
+    const querySnapshot = await getDocs(q);
+    let results: any = [];
+    querySnapshot.forEach((doc) => {
+      results.push(doc.data());
+      const info = {
+        name: doc.data().personName,
+        songs: doc.data().songs,
+      };
+      results.push(info);
+    });
+    return results[0];
+  } else {
+    const q = query(collection(db, "topTens"), where("personName", "==", name));
+    const querySnapshot = await getDocs(q);
+    let results: any = [];
+    querySnapshot.forEach((doc) => {
+      results.push(doc.data());
+      const info = {
+        name: doc.data().personName,
+        songs: doc.data().songs,
+      };
+      results.push(info);
+    });
+    return results[0];
+  }
+};
+
 export const getShortlistedSong = async (documentId: string) => {
   const docRef = doc(db, "shortlistedSongs", documentId);
   const docSnap = await getDoc(docRef);
@@ -129,6 +168,80 @@ export const getShortlistedSong = async (documentId: string) => {
     console.log("No such document!");
     return null;
   }
+};
+
+export const getResults = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "topTensTest"));
+    const votingResults: Array<PersonsResults> = [];
+
+    querySnapshot.forEach((doc) => {
+      votingResults.push({
+        personName: doc.data().personName,
+        songs: doc.data().songs,
+      });
+    });
+
+    const combinedResults = createCombinedVotingResults(votingResults);
+    await addSongDetails(combinedResults);
+
+    return combinedResults;
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return [];
+  }
+};
+
+const addSongDetails = async (countedResults: any) => {
+  await Promise.all(
+    countedResults.map(async (result: SongDetails) => {
+      const songDetails = await getShortlistedSong(result.song.id);
+      result.song.name = songDetails?.name;
+      result.song.youtubeUrl = songDetails?.youtubeUrl;
+    })
+  );
+};
+
+const createCombinedVotingResults = (personsResults: PersonsResults[]) => {
+  const songPoints: Record<string, number> = {};
+  const songDetails: Record<string, SongDetails> = {};
+
+  personsResults.forEach((personResult) => {
+    for (const song of personResult.songs) {
+      const maxPoints = 200;
+      const pointsPerSong = 20;
+
+      const points = Math.max(maxPoints - song.position * pointsPerSong, 0);
+
+      if (songPoints[song.id]) {
+        songPoints[song.id] += points;
+      } else {
+        songPoints[song.id] = points;
+      }
+
+      if (!songDetails[song.id]) {
+        songDetails[song.id] = {
+          song: {
+            id: song.id,
+            name: "",
+            youtubeUrl: "",
+          },
+          points: 0,
+          details: [],
+        };
+      }
+
+      songDetails[song.id].points += points;
+      songDetails[song.id].details.push({
+        voterName: personResult.personName,
+        position: song.position,
+      });
+    }
+  });
+  const sortedSongDetails = Object.values(songDetails).sort(
+    (a, b) => a.points - b.points
+  );
+  return sortedSongDetails;
 };
 
 const checkCode = (code: string) => {
@@ -155,6 +268,27 @@ const checkCode = (code: string) => {
       break;
     case "jdh7f":
       name = "chris";
+      break;
+    case "test1":
+      name = "PaulTest";
+      break;
+    case "test2":
+      name = "AlexTest";
+      break;
+    case "test3":
+      name = "TomTest";
+      break;
+    case "test4":
+      name = "JoshTest";
+      break;
+    case "test5":
+      name = "DibsTest";
+      break;
+    case "test6":
+      name = "DaineTest";
+      break;
+    case "test7":
+      name = "ChrisTest";
       break;
     default:
       name = "Sorry, that's not a valid option.";

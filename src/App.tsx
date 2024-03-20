@@ -1,20 +1,45 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Home from "./pages/Home";
-import PageOne from "./pages/PageOne";
-import PageTwo from "./pages/PageTwo";
+import Results from "./pages/Results";
+import { useEffect, useState } from "react";
+import { fetchSpotifyToken } from "./api/spotifyCalls";
+import { Text } from "@chakra-ui/react";
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState("");
+
+  useEffect(() => {
+    const getSpotifyToken = async () => {
+      const token = await fetchSpotifyToken();
+      setAccessToken(token);
+      setLoading(false);
+    };
+
+    if (loading) {
+      getSpotifyToken();
+    }
+  }, [loading]);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="pageOne" element={<PageOne />} />
-          <Route path="pageTwo" element={<PageTwo />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <>
+      {loading ? (
+        <Text>Loading</Text>
+      ) : (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home accessToken={accessToken} />} />
+              {/* <Route
+                path="results"
+                element={<Results accessToken={accessToken} />}
+              /> */}
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      )}
+    </>
   );
 };
 

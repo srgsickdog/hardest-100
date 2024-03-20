@@ -22,8 +22,9 @@ import {
 import { fetchSongDetails } from "../api/spotifyCalls";
 import HorizontalStack from "../Layout/HorizontalStack";
 import ConfirmationModal from "./ConfirmationModal";
+import VideoPlayer from "./VideoPlayer";
 
-interface ShortlistedSongProps {
+interface SingleSongProps {
   accessToken: string;
   song: any;
   showRemove?: boolean;
@@ -38,7 +39,7 @@ interface ShortlistedSongProps {
   showYoutubeWarning?: boolean;
 }
 
-const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
+const SingleSong: React.FC<SingleSongProps> = ({
   accessToken,
   song,
   showRemove = false,
@@ -73,6 +74,7 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
     useState(false);
   const [finishedYoutubeFetch, setFinishedYoutubeFetch] = useState(false);
   const [youtubeUrlValue, setYoutubeUrlValue] = useState("");
+  const [showYoutubeVideo, setShowYoutubeVideo] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onClose = () => setIsModalOpen(false);
@@ -117,6 +119,9 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
     );
   };
 
+  const handleCheckVideo = () => {
+    setShowYoutubeVideo(!showYoutubeVideo);
+  };
   return (
     <>
       {finishedSongDetailsFetch && finishedYoutubeFetch ? (
@@ -215,25 +220,49 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
                     </HorizontalStack>
                   </HorizontalStack>
                   {showUrl && (
-                    <HorizontalStack
-                      style={{ marginTop: 4, justifyContent: "space-between" }}
-                    >
-                      <Input
-                        placeholder="Enter Youtube URL"
-                        value={youtubeUrlValue}
-                        onChange={(e) => setYoutubeUrlValue(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleSetYoutubeUrl();
-                          }
+                    <>
+                      <HorizontalStack
+                        style={{
+                          marginTop: 4,
+                          justifyContent: "space-between",
                         }}
-                        maxWidth={500}
-                        marginRight={4}
-                      />
-                      <Button colorScheme="blue" onClick={handleSetYoutubeUrl}>
-                        Save Youtube URL
-                      </Button>
-                    </HorizontalStack>
+                      >
+                        <HorizontalStack style={{ flex: 6, marginBottom: 4 }}>
+                          <Input
+                            placeholder="Enter Youtube URL"
+                            value={youtubeUrlValue}
+                            onChange={(e) => setYoutubeUrlValue(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                handleSetYoutubeUrl();
+                              }
+                            }}
+                            maxWidth={500}
+                            marginRight={4}
+                          />
+                          <Button colorScheme="blue" onClick={handleCheckVideo}>
+                            Check Video
+                          </Button>
+                        </HorizontalStack>
+
+                        <Button
+                          style={{ flex: 1 }}
+                          colorScheme="blue"
+                          onClick={handleSetYoutubeUrl}
+                        >
+                          Save Youtube URL
+                        </Button>
+                      </HorizontalStack>
+                      {showYoutubeVideo && (
+                        <VideoPlayer
+                          onVideoEnd={() => {}}
+                          youtubeUrl={youtubeUrlValue}
+                          playing={false}
+                          height={"60%"}
+                          width={"27%"}
+                        />
+                      )}
+                    </>
                   )}
                 </Box>
               </Stack>
@@ -350,4 +379,4 @@ const ShortlistedSong: React.FC<ShortlistedSongProps> = ({
   );
 };
 
-export default ShortlistedSong;
+export default SingleSong;

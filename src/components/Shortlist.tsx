@@ -59,9 +59,9 @@ const Shortlist: React.FC<ShortlistProps> = ({
           >
             Clear Filter
           </Button>
-          <Button onClick={() => setMiniView(!miniView)} colorScheme="blue">
+          {/* <Button onClick={() => setMiniView(!miniView)} colorScheme="blue">
             Toggle Mini View
-          </Button>
+          </Button> */}
         </HorizontalStack>
 
         {shortlist.map((song) => {

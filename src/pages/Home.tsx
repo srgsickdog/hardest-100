@@ -1,11 +1,9 @@
 import {
-  Box,
   Button,
   Card,
   Grid,
   GridItem,
   Input,
-  SimpleGrid,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -23,9 +21,12 @@ import { headings } from "../heading";
 
 import TopTen from "../components/TopTen";
 
-const Home = () => {
+interface HomeProps {
+  accessToken: string;
+}
+
+const Home: React.FC<HomeProps> = ({ accessToken }) => {
   const [randomHeading, setRandomHeading] = useState("");
-  const [accessToken, setAccessToken] = useState("");
   const [shortlist, setShortlist] = useState<string[]>([]);
   const [codeInput, setCodeInput] = useState<string>("");
   const [topTen, setTopTen] = useState<Array<any>>([]);
@@ -34,7 +35,6 @@ const Home = () => {
   const [showSpotifySearch, setShowStoptifySearch] = useState(true);
   const [bottomSectionHeight, setBottomSectionHeight] = useState("50vh");
 
-  const [accessTokenFetched, setAccessTokenFetched] = useState(false);
   const [shortlistFilterValue, setShortlistFilterValue] = useState("");
 
   const callShortListedSongs = async () => {
@@ -52,16 +52,6 @@ const Home = () => {
   };
   useEffect(() => {
     setRandomHeading(getRandomHeading());
-  }, []);
-
-  const getSpotifyToken = async () => {
-    const token = await fetchSpotifyToken();
-    setAccessToken(token);
-    setAccessTokenFetched(true);
-  };
-
-  useEffect(() => {
-    getSpotifyToken();
   }, []);
 
   const removeFromShortlist = async (songId: string) => {
@@ -120,7 +110,7 @@ const Home = () => {
     submitVotes();
   }, [topTen]);
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "96vh" }}>
       <Grid
         h="100%"
         templateRows="repeat(6, 1fr) 2fr" // Adjusted row sizes
@@ -132,7 +122,7 @@ const Home = () => {
             <Text fontSize={30} textAlign={"center"}>
               {randomHeading}
             </Text>
-            <Text fontSize={22}>Enter Code To get your top ten</Text>
+            <Text fontSize={22}>Enter Code To get your votes</Text>
             <Stack direction="row" flex={1}>
               <Input
                 placeholder="Enter Code"
