@@ -9,9 +9,9 @@ const Layout = () => {
           <Tab>
             <Link to="/">Voting</Link>
           </Tab>
-          {/* <Tab>
+          <Tab>
             <Link to="/results">Results</Link>
-          </Tab> */}
+          </Tab>
         </TabList>
       </Tabs>
       <Outlet />

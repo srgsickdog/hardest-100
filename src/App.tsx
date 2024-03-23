@@ -31,10 +31,10 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home accessToken={accessToken} />} />
-              {/* <Route
+              <Route
                 path="results"
                 element={<Results accessToken={accessToken} />}
-              /> */}
+              />
             </Route>
           </Routes>
         </BrowserRouter>
