@@ -122,6 +122,11 @@ const SingleSong: React.FC<SingleSongProps> = ({
   const handleCheckVideo = () => {
     setShowYoutubeVideo(!showYoutubeVideo);
   };
+
+  const getPoints = (position: number) => {
+    const points = 200 - song.position * 10;
+    return points;
+  };
   return (
     <>
       {finishedSongDetailsFetch && finishedYoutubeFetch ? (
@@ -177,6 +182,11 @@ const SingleSong: React.FC<SingleSongProps> = ({
                       </div>
                     </HorizontalStack>
                     <HorizontalStack>
+                      {showPosition && (
+                        <Text fontSize={12} color="#2f89d4" marginRight={1}>
+                          {position && getPoints(position)} points
+                        </Text>
+                      )}
                       {songDetails.preview_url !== null && (
                         <Box onClick={togglePlay}>
                           <HorizontalStack>
@@ -190,6 +200,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
                           </HorizontalStack>
                         </Box>
                       )}
+
                       {songDetails.preview_url !== null && (
                         <div style={{ display: "none" }}>
                           <audio id={playId} controls>
@@ -308,6 +319,11 @@ const SingleSong: React.FC<SingleSongProps> = ({
                     <Text fontSize={12} color="grey" marginX={2}>
                       {songDetails.artists[0].name}
                     </Text>
+                    {showPosition && (
+                      <Text fontSize={12} color="#2f89d4" marginRight={1}>
+                        {position && getPoints(position)} points
+                      </Text>
+                    )}
                   </HorizontalStack>
                 </HorizontalStack>
                 <HorizontalStack>
