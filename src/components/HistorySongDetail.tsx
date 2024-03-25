@@ -1,4 +1,4 @@
-import { Card, Text, Image } from "@chakra-ui/react";
+import { Card, Text, Image, Box } from "@chakra-ui/react";
 import { SongDetails } from "../types/types";
 import HorizontalStack from "../Layout/HorizontalStack";
 import { useEffect, useState } from "react";
@@ -85,17 +85,17 @@ const HistorySongDetail: React.FC<HistorySongDetailProps> = ({
           <hr />
           {songDetails.details.map((detail: any, index) => {
             return (
-              <HorizontalStack
-                style={{ justifyContent: "space-between" }}
-                key={index}
-              >
-                <Text fontSize={20} color={"grey"}>
-                  {detail.voterName} voted it{" "}
-                </Text>
-                <Text fontSize={20}>
-                  {getPositionSuffix(detail.position + 1)}
-                </Text>
-              </HorizontalStack>
+              <Box key={index}>
+                <HorizontalStack style={{ justifyContent: "space-between" }}>
+                  <Text fontSize={20} color={"grey"}>
+                    {detail.voterName} voted it{" "}
+                  </Text>
+                  <Text fontSize={20}>
+                    {getPositionSuffix(detail.position + 1)}
+                  </Text>
+                </HorizontalStack>
+                <Text>{songDetails.points} points</Text>
+              </Box>
             );
           })}
         </Card>

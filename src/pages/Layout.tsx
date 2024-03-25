@@ -12,6 +12,9 @@ const Layout = () => {
           <Tab>
             <Link to="/results">Results</Link>
           </Tab>
+          <Tab>
+            <Link to="/allResults">All Results</Link>
+          </Tab>
         </TabList>
       </Tabs>
       <Outlet />

@@ -5,6 +5,7 @@ import Results from "./pages/Results";
 import { useEffect, useState } from "react";
 import { fetchSpotifyToken } from "./api/spotifyCalls";
 import { Text } from "@chakra-ui/react";
+import AllResults from "./pages/AllResults";
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,10 @@ const App = () => {
               <Route
                 path="results"
                 element={<Results accessToken={accessToken} />}
+              />
+              <Route
+                path="allResults"
+                element={<AllResults accessToken={accessToken} />}
               />
             </Route>
           </Routes>

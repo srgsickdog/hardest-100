@@ -16,6 +16,7 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [history, setHistory] = useState<SongDetails[]>([]);
+  const [timer, setTimer] = useState<number | null>(null);
 
   const [goToIndexinputValue, setGoToIndexInputValue] = useState("");
 
@@ -32,6 +33,8 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
   const handleGetResults = async () => {
     try {
       const response = await getResults();
+      console.log("reuslts: ", response);
+
       setResults(response);
       setCurrentSong(response[0]);
 
@@ -77,7 +80,16 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
 
   const playNextSong = () => {
     setIsPlaying(false);
-    setCurrentSongIndex((prevIndex) => prevIndex + 1);
+    setTimer(20); // Set initial timer value
+    const interval = setInterval(() => {
+      setTimer((prevTime) => (prevTime !== null ? prevTime - 1 : null)); // Decrement timer
+    }, 1000); // Update every second
+
+    setTimeout(() => {
+      setCurrentSongIndex((prevIndex) => prevIndex + 1);
+      clearInterval(interval); // Stop timer when song changes
+      setTimer(null); // Reset timer
+    }, 20000);
   };
 
   const goToIndex = () => {
@@ -182,9 +194,11 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
                   Go
                 </Button>
               </HorizontalStack>
-              <Text marginLeft={3}>
-                Make sure to refresh before using search
-              </Text>
+              {timer !== null ? (
+                <Text marginLeft={3}>{timer} seconds remaining</Text>
+              ) : (
+                <Text marginLeft={3}>Timer</Text>
+              )}
               <Box padding={3}>
                 {history
                   .slice()

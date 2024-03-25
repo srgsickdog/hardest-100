@@ -192,6 +192,28 @@ export const getResults = async () => {
   }
 };
 
+export const getAllResults = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "topTensTest"));
+    const votingResults: Array<PersonsResults> = [];
+
+    querySnapshot.forEach((doc) => {
+      votingResults.push({
+        personName: doc.data().personName,
+        songs: doc.data().songs,
+      });
+    });
+
+    const combinedResults = createCombinedVotingResults(votingResults);
+    await addSongDetails(combinedResults);
+
+    return combinedResults;
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    return [];
+  }
+};
+
 const addSongDetails = async (countedResults: any) => {
   await Promise.all(
     countedResults.map(async (result: SongDetails) => {
@@ -208,34 +230,36 @@ const createCombinedVotingResults = (personsResults: PersonsResults[]) => {
 
   personsResults.forEach((personResult) => {
     for (const song of personResult.songs) {
-      const maxPoints = 200;
-      const pointsPerSong = 20;
+      if (song.position <= 19) {
+        const maxPoints = 200;
+        const pointsPerSong = 10;
 
-      const points = Math.max(maxPoints - song.position * pointsPerSong, 0);
+        const points = maxPoints - song.position * pointsPerSong;
 
-      if (songPoints[song.id]) {
-        songPoints[song.id] += points;
-      } else {
-        songPoints[song.id] = points;
+        if (songPoints[song.id]) {
+          songPoints[song.id] += points;
+        } else {
+          songPoints[song.id] = points;
+        }
+
+        if (!songDetails[song.id]) {
+          songDetails[song.id] = {
+            song: {
+              id: song.id,
+              name: "",
+              youtubeUrl: "",
+            },
+            points: 0,
+            details: [],
+          };
+        }
+
+        songDetails[song.id].points += points;
+        songDetails[song.id].details.push({
+          voterName: personResult.personName,
+          position: song.position,
+        });
       }
-
-      if (!songDetails[song.id]) {
-        songDetails[song.id] = {
-          song: {
-            id: song.id,
-            name: "",
-            youtubeUrl: "",
-          },
-          points: 0,
-          details: [],
-        };
-      }
-
-      songDetails[song.id].points += points;
-      songDetails[song.id].details.push({
-        voterName: personResult.personName,
-        position: song.position,
-      });
     }
   });
   const sortedSongDetails = Object.values(songDetails).sort(

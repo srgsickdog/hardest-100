@@ -59,11 +59,6 @@ const Home: React.FC<HomeProps> = ({ accessToken }) => {
     callShortListedSongs();
   };
 
-  function sortSongsAscending(songs: any) {
-    songs.sort((a: any, b: any) => a.position - b.position);
-    return songs;
-  }
-
   const handleGetTopTen = async () => {
     const response = await getTopTen(codeInput);
     const sorted = sortSongsAscending(response.songs);
@@ -76,7 +71,10 @@ const Home: React.FC<HomeProps> = ({ accessToken }) => {
   };
   const removeSongFromTopTen = async (songId: string) => {
     const newTopTen = topTen.filter((song) => song.id !== songId);
-    const sorted = sortSongsAscending(newTopTen);
+    const newTopTenIndexed = newTopTen.map((song, index) => {
+      return { id: song.id, position: index };
+    });
+    const sorted = sortSongsAscending(newTopTenIndexed);
     setTopTen(sorted);
   };
   const addToTopTen = (songId: string) => {
@@ -109,6 +107,11 @@ const Home: React.FC<HomeProps> = ({ accessToken }) => {
     setTopTen(sorted);
     submitVotes();
   }, [topTen]);
+
+  function sortSongsAscending(songs: any) {
+    songs.sort((a: any, b: any) => a.position - b.position);
+    return songs;
+  }
   return (
     <div style={{ height: "96vh" }}>
       <Grid
