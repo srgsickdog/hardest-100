@@ -172,7 +172,7 @@ export const getShortlistedSong = async (documentId: string) => {
 
 export const getResults = async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "topTensTest"));
+    const querySnapshot = await getDocs(collection(db, "topTensTest")); //TODO change to real DB name
     const votingResults: Array<PersonsResults> = [];
 
     querySnapshot.forEach((doc) => {
@@ -194,20 +194,13 @@ export const getResults = async () => {
 
 export const getAllResults = async () => {
   try {
-    const querySnapshot = await getDocs(collection(db, "topTensTest"));
-    const votingResults: Array<PersonsResults> = [];
-
+    const querySnapshot = await getDocs(collection(db, "topTensTest")); //TODO change to real DB name
+    const allResults: any = [];
     querySnapshot.forEach((doc) => {
-      votingResults.push({
-        personName: doc.data().personName,
-        songs: doc.data().songs,
-      });
+      allResults.push(doc.data());
     });
 
-    const combinedResults = createCombinedVotingResults(votingResults);
-    await addSongDetails(combinedResults);
-
-    return combinedResults;
+    return allResults;
   } catch (error) {
     console.error("Error fetching document:", error);
     return [];
