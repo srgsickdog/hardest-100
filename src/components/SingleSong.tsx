@@ -124,7 +124,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
   };
 
   const getPoints = (position: number) => {
-    const points = 200 - position * 10;
+    const points = 200 - (position - 1) * 10;
     return points;
   };
   return (
