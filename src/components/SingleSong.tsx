@@ -49,7 +49,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
   showAddtoVotes = false,
   showPosition = false,
   showUrl = false,
-  position,
+  position = 0,
   miniView = false,
   showYoutubeWarning = false,
 }) => {
@@ -124,7 +124,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
   };
 
   const getPoints = (position: number) => {
-    const points = 200 - song.position * 10;
+    const points = 200 - position * 10;
     return points;
   };
   return (
@@ -182,7 +182,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
                       </div>
                     </HorizontalStack>
                     <HorizontalStack>
-                      {showPosition && (
+                      {showPosition && getPoints(position) > 0 && (
                         <Text fontSize={12} color="#2f89d4" marginRight={1}>
                           {position && getPoints(position)} points
                         </Text>
@@ -319,7 +319,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
                     <Text fontSize={12} color="grey" marginX={2}>
                       {songDetails.artists[0].name}
                     </Text>
-                    {showPosition && (
+                    {showPosition && getPoints(position) > 0 && (
                       <Text fontSize={12} color="#2f89d4" marginRight={1}>
                         {position && getPoints(position)} points
                       </Text>
