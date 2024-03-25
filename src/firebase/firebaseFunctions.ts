@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import db from "../fireabaseConfig";
 import { PersonsResults, SongDetails, Song } from "../types/types";
+import { maxPoints, pointsPerSong } from "../constants/constants";
 
 export const getShortListedSongs = async (): Promise<string[]> => {
   try {
@@ -223,10 +224,7 @@ const createCombinedVotingResults = (personsResults: PersonsResults[]) => {
 
   personsResults.forEach((personResult) => {
     for (const song of personResult.songs) {
-      if (song.position <= 19) {
-        const maxPoints = 200;
-        const pointsPerSong = 10;
-
+      if (song.position <= 24) {
         const points = maxPoints - song.position * pointsPerSong;
 
         if (songPoints[song.id]) {
@@ -285,6 +283,12 @@ const checkCode = (code: string) => {
       break;
     case "jdh7f":
       name = "chris";
+      break;
+    case "jfkld6":
+      name = "yohan";
+      break;
+    case "pqu74":
+      name = "gus";
       break;
     case "test1":
       name = "PaulTest";

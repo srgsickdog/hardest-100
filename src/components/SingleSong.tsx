@@ -23,6 +23,7 @@ import { fetchSongDetails } from "../api/spotifyCalls";
 import HorizontalStack from "../Layout/HorizontalStack";
 import ConfirmationModal from "./ConfirmationModal";
 import VideoPlayer from "./VideoPlayer";
+import { maxPoints, pointsPerSong } from "../constants/constants";
 
 interface SingleSongProps {
   accessToken: string;
@@ -124,7 +125,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
   };
 
   const getPoints = (position: number) => {
-    const points = 200 - (position - 1) * 10;
+    const points = maxPoints - (position - 1) * pointsPerSong;
     return points;
   };
   return (
@@ -200,7 +201,6 @@ const SingleSong: React.FC<SingleSongProps> = ({
                           </HorizontalStack>
                         </Box>
                       )}
-
                       {songDetails.preview_url !== null && (
                         <div style={{ display: "none" }}>
                           <audio id={playId} controls>
