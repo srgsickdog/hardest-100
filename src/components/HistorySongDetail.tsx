@@ -94,10 +94,10 @@ const HistorySongDetail: React.FC<HistorySongDetailProps> = ({
                     {getPositionSuffix(detail.position + 1)}
                   </Text>
                 </HorizontalStack>
-                <Text>{songDetails.points} points</Text>
               </Box>
             );
           })}
+          <Text>{songDetails.points} total points</Text>
         </Card>
       ) : (
         <Text>Error</Text>

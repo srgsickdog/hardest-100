@@ -80,15 +80,15 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
 
   const playNextSong = () => {
     setIsPlaying(false);
-    setTimer(20); // Set initial timer value
+    setTimer(20);
     const interval = setInterval(() => {
-      setTimer((prevTime) => (prevTime !== null ? prevTime - 1 : null)); // Decrement timer
-    }, 1000); // Update every second
+      setTimer((prevTime) => (prevTime !== null ? prevTime - 1 : null));
+    }, 1000);
 
     setTimeout(() => {
       setCurrentSongIndex((prevIndex) => prevIndex + 1);
-      clearInterval(interval); // Stop timer when song changes
-      setTimer(null); // Reset timer
+      clearInterval(interval);
+      setTimer(null);
     }, 20000);
   };
 
@@ -115,6 +115,21 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
     return arrayLength - currentIndex;
   };
 
+  function getPositionSuffix(position: any) {
+    const remainder10 = position % 10;
+    const remainder100 = position % 100;
+
+    if (remainder10 === 1 && remainder100 !== 11) {
+      return position + "st";
+    } else if (remainder10 === 2 && remainder100 !== 12) {
+      return position + "nd";
+    } else if (remainder10 === 3 && remainder100 !== 13) {
+      return position + "rd";
+    } else {
+      return position + "th";
+    }
+  }
+
   return (
     <>
       {loading ? (
@@ -137,19 +152,21 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
                   results.length
                 ) === 1 ? (
                   <Text fontSize={24} textAlign={"center"}>
-                    Number:{" "}
-                    {getPositionRelativeToLength(
-                      currentSongIndex,
-                      results.length
+                    {getPositionSuffix(
+                      getPositionRelativeToLength(
+                        currentSongIndex,
+                        results.length
+                      )
                     )}
                     , This better be Bring Me The Horizon
                   </Text>
                 ) : (
                   <Text fontSize={24} textAlign={"center"}>
-                    Number:{" "}
-                    {getPositionRelativeToLength(
-                      currentSongIndex,
-                      results.length
+                    {getPositionSuffix(
+                      getPositionRelativeToLength(
+                        currentSongIndex,
+                        results.length
+                      )
                     )}
                   </Text>
                 )}
@@ -197,7 +214,7 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
               {timer !== null ? (
                 <Text marginLeft={3}>{timer} seconds remaining</Text>
               ) : (
-                <Text marginLeft={3}>Timer</Text>
+                <Text marginLeft={3}></Text>
               )}
               <Box padding={3}>
                 {history
