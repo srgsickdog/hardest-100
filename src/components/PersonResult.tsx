@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 interface PersonResultProps {
   personResult: any;
   accessToken: string;
+  setAllSongVotes: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const PersonResult: React.FC<PersonResultProps> = ({
   personResult,
   accessToken,
+  setAllSongVotes,
 }) => {
   const handleGetSong = async () => {};
   useEffect(() => {
@@ -30,6 +32,7 @@ const PersonResult: React.FC<PersonResultProps> = ({
               position={song.position + 1}
               miniView={true}
               showPosition
+              setAllSongVotes={setAllSongVotes}
             />
           );
         })}

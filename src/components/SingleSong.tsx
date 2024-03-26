@@ -38,6 +38,7 @@ interface SingleSongProps {
   showUrl?: boolean;
   miniView?: boolean;
   showYoutubeWarning?: boolean;
+  setAllSongVotes?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const SingleSong: React.FC<SingleSongProps> = ({
@@ -53,6 +54,7 @@ const SingleSong: React.FC<SingleSongProps> = ({
   position = 0,
   miniView = false,
   showYoutubeWarning = false,
+  setAllSongVotes,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playId, setPlayId] = useState(`audioPlayer${song.id}`);
@@ -82,6 +84,9 @@ const SingleSong: React.FC<SingleSongProps> = ({
 
   const getSongDetails = async () => {
     const response = await fetchSongDetails(accessToken, song.id);
+    if (setAllSongVotes) {
+      setAllSongVotes((song: any) => [...song, response]);
+    }
     setSongDetails(response);
     setFinishedSongDetailsFetch(true);
   };
