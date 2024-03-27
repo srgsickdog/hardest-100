@@ -62,8 +62,8 @@ const HistorySongDetail: React.FC<HistorySongDetailProps> = ({
         <Card
           padding={3}
           marginBottom={2}
-          borderColor={currentSongPlaying ? "blue.300" : "gray.200"} // Border color based on currentSongPlaying
-          borderWidth={currentSongPlaying ? "2px" : "1px"} // Border width based on currentSongPlaying
+          borderColor={currentSongPlaying ? "blue.400" : "gray.200"} // Border color based on currentSongPlaying
+          borderWidth={currentSongPlaying ? "4px" : "1px"} // Border width based on currentSongPlaying
         >
           <HorizontalStack style={{ justifyContent: "space-between" }}>
             <Text>{songInfo.name}</Text>
@@ -97,7 +97,10 @@ const HistorySongDetail: React.FC<HistorySongDetailProps> = ({
               </Box>
             );
           })}
-          <Text>{songDetails.points} total points</Text>
+          <HorizontalStack style={{ justifyContent: "space-between" }}>
+            <Text fontSize={20}>{songDetails.placement}</Text>
+            <Text fontSize={18}>{songDetails.points} total points</Text>
+          </HorizontalStack>
         </Card>
       ) : (
         <Text>Error</Text>

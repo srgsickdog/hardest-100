@@ -218,6 +218,14 @@ const addSongDetails = async (countedResults: any) => {
   );
 };
 
+function getPlacementString(placement: any) {
+  const suffixes = ["st", "nd", "rd"];
+  const lastDigit = placement % 10;
+  const suffix =
+    lastDigit > 0 && lastDigit <= 3 ? suffixes[lastDigit - 1] : "th";
+  return `${placement}${suffix}`;
+}
+
 const createCombinedVotingResults = (personsResults: PersonsResults[]) => {
   const songPoints: Record<string, number> = {};
   const songDetails: Record<string, SongDetails> = {};
@@ -242,6 +250,7 @@ const createCombinedVotingResults = (personsResults: PersonsResults[]) => {
             },
             points: 0,
             details: [],
+            placement: "",
           };
         }
 
@@ -253,9 +262,12 @@ const createCombinedVotingResults = (personsResults: PersonsResults[]) => {
       }
     }
   });
-  const sortedSongDetails = Object.values(songDetails).sort(
-    (a, b) => a.points - b.points
-  );
+  const sortedSongDetails = Object.values(songDetails)
+    .sort((a, b) => a.points - b.points)
+    .map((song, index, array) => {
+      const placement = array.length - index;
+      return { ...song, placement: getPlacementString(placement) };
+    });
   return sortedSongDetails;
 };
 

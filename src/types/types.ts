@@ -7,6 +7,7 @@ export interface SongDetails {
   song: Song;
   points: number;
   details: Array<{ voterName: string; position: number }>;
+  placement: string;
 }
 
 export interface Song {

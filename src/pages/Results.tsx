@@ -1,10 +1,24 @@
 import { useEffect, useState } from "react";
 import { getResults } from "../firebase/firebaseFunctions";
 import { SongDetails } from "../types/types";
-import { Card, Text, Box, Grid, Input, Button } from "@chakra-ui/react";
+import {
+  Card,
+  Text,
+  Box,
+  Grid,
+  Input,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  useDisclosure,
+} from "@chakra-ui/react";
 import VideoPlayer from "../components/VideoPlayer";
 import HorizontalStack from "../Layout/HorizontalStack";
 import HistorySongDetail from "../components/HistorySongDetail";
+
+const timerDuration = 10;
 
 interface ResultsProps {
   accessToken: string;
@@ -18,6 +32,8 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
   const [history, setHistory] = useState<SongDetails[]>([]);
   const [timer, setTimer] = useState<number | null>(null);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [goToIndexinputValue, setGoToIndexInputValue] = useState("");
 
   const [currentSong, setCurrentSong] = useState<SongDetails>({
@@ -28,12 +44,12 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
     },
     points: 0,
     details: [],
+    placement: "",
   });
 
   const handleGetResults = async () => {
     try {
       const response = await getResults();
-      console.log("reuslts: ", response);
 
       setResults(response);
       setCurrentSong(response[0]);
@@ -59,9 +75,9 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
     }
   }, []);
 
-  //   useEffect(() => {
-  //     console.log("results: ", results);
-  //   }, [results]);
+  // useEffect(() => {
+  //   console.log("results: ", results);
+  // }, [results]);
 
   useEffect(() => {
     setCurrentSong(results[currentSongIndex]);
@@ -79,8 +95,9 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
   }, [currentSongIndex]);
 
   const playNextSong = () => {
+    onOpen();
     setIsPlaying(false);
-    setTimer(20);
+    setTimer(timerDuration);
     const interval = setInterval(() => {
       setTimer((prevTime) => (prevTime !== null ? prevTime - 1 : null));
     }, 1000);
@@ -88,8 +105,9 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
     setTimeout(() => {
       setCurrentSongIndex((prevIndex) => prevIndex + 1);
       clearInterval(interval);
+      onClose();
       setTimer(null);
-    }, 20000);
+    }, timerDuration * 1000);
   };
 
   const goToIndex = () => {
@@ -129,6 +147,24 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
       return position + "th";
     }
   }
+
+  useEffect(() => {
+    setTimer(null);
+  }, [onClose]);
+
+  useEffect(() => {
+    if (timer) {
+      if (timer >= 1) {
+        const modalText = document.querySelector(".zoomFadeOut");
+        if (modalText) {
+          modalText.classList.remove("zoomFadeOut");
+          //@ts-ignore
+          void modalText.offsetWidth; // Trigger reflow to restart the animation
+          modalText.classList.add("zoomFadeOut");
+        }
+      }
+    }
+  }, [timer]);
 
   return (
     <>
@@ -211,11 +247,6 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
                   Go
                 </Button>
               </HorizontalStack>
-              {timer !== null ? (
-                <Text marginLeft={3}>{timer} seconds remaining</Text>
-              ) : (
-                <Text marginLeft={3}></Text>
-              )}
               <Box padding={3}>
                 {history
                   .slice()
@@ -235,6 +266,18 @@ const Results: React.FC<ResultsProps> = ({ accessToken }) => {
           </Box>
         </Grid>
       )}
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent height={"30%"}>
+          <ModalBody display="flex" alignItems="center" justifyContent="center">
+            <Box textAlign="center">
+              <Text className="zoomFadeOut" fontSize="100">
+                {timer}
+              </Text>
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
