@@ -20,6 +20,7 @@ import { fetchSpotifyToken } from "../api/spotifyCalls";
 import { headings } from "../heading";
 
 import TopTen from "../components/TopTen";
+import HorizontalStack from "../Layout/HorizontalStack";
 
 interface HomeProps {
   accessToken: string;
@@ -112,6 +113,39 @@ const Home: React.FC<HomeProps> = ({ accessToken }) => {
     songs.sort((a: any, b: any) => a.position - b.position);
     return songs;
   }
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const calculateTimeLeft = () => {
+    const targetDate = new Date("2024-03-29T15:00:00"); // Set your target date and time here
+    const now = new Date();
+    const difference = targetDate.getTime() - now.getTime();
+
+    let timeLeft = {
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    };
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    }
+
+    return timeLeft;
+  };
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
   return (
     <div style={{ height: "96vh" }}>
       <Grid
@@ -125,7 +159,26 @@ const Home: React.FC<HomeProps> = ({ accessToken }) => {
             <Text fontSize={30} textAlign={"center"}>
               {randomHeading}
             </Text>
-            <Text fontSize={22}>Enter Code To get your votes</Text>
+            <Text fontSize={22} marginRight={8}>
+              Enter Code To get your votes
+            </Text>
+            <HorizontalStack>
+              <Text fontSize={15} marginRight={2} color={"grey"}>
+                Voting Closes:
+              </Text>
+              <Text fontSize={15} marginRight={2} color={"grey"}>
+                {timeLeft.days > 0 && <div>{timeLeft.days} days </div>}
+              </Text>
+              <Text fontSize={15} marginRight={2} color={"grey"}>
+                {timeLeft.hours > 0 && <div>{timeLeft.hours} hours </div>}
+              </Text>
+              <Text fontSize={15} marginRight={2} color={"grey"}>
+                {timeLeft.minutes > 0 && <div>{timeLeft.minutes} minutes </div>}
+              </Text>
+              <Text fontSize={15} marginRight={2} color={"grey"}>
+                {Object.keys(timeLeft).length === 0 && <div>Voting Closed</div>}
+              </Text>
+            </HorizontalStack>
             <Stack direction="row" flex={1}>
               <Input
                 placeholder="Enter Code"
